@@ -12,9 +12,8 @@ class ServiceHealthRefresher
     private const LICENSE_STATUS_URL = 'https://license.arcn.com.br/app_delivery_license/status.php';
     //private const LICENSE_STATUS_URL = 'http://147.79.81.133/app_delivery_license/status.php';
 
-    private const FLUXY_URL = 'https://fluxy.arcn.com.br';
-
-    private const XBARCLY_URL = 'https://xbarcly.arcn.com.br';
+    /** Mesmo host para Fluxy e xBarcly — uma única requisição HTTP atende os dois. */
+    private const FLUXY_XBARCLY_CHECK_URL = 'http://147.79.81.133';
 
     private const DEGRADED_MS = 2000;
 
@@ -23,15 +22,14 @@ class ServiceHealthRefresher
         $checkedAt = now();
 
         $license = $this->checkLicenseEndpoint();
-        $fluxy = $this->checkHttpSite(self::FLUXY_URL);
-        $xbarcly = $this->checkHttpSite(self::XBARCLY_URL);
+        $fluxyXbarcly = $this->checkHttpSite(self::FLUXY_XBARCLY_CHECK_URL);
 
         $rows = [
             $this->row('delivery', 'Delivery', 'Licenças & delivery', 'HTTP', self::LICENSE_STATUS_URL, $license, $checkedAt),
             $this->row('flowpilot', 'FlowPilot', 'Licenças & delivery', 'HTTP', self::LICENSE_STATUS_URL, $license, $checkedAt),
             $this->row('waiterpilot', 'WaiterPilot', 'Licenças & delivery', 'HTTP', self::LICENSE_STATUS_URL, $license, $checkedAt),
-            $this->row('fluxy', 'Fluxy', 'Sites públicos', 'HTTP', self::FLUXY_URL, $fluxy, $checkedAt),
-            $this->row('xbarcly', 'xBarcly', 'Sites públicos', 'HTTP', self::XBARCLY_URL, $xbarcly, $checkedAt),
+            $this->row('fluxy', 'Fluxy', 'Sites públicos', 'HTTP', self::FLUXY_XBARCLY_CHECK_URL, $fluxyXbarcly, $checkedAt),
+            $this->row('xbarcly', 'xBarcly', 'Sites públicos', 'HTTP', self::FLUXY_XBARCLY_CHECK_URL, $fluxyXbarcly, $checkedAt),
         ];
 
         DB::transaction(function () use ($rows) {
@@ -76,7 +74,7 @@ class ServiceHealthRefresher
                 ->connectTimeout(5)
                 ->get(self::LICENSE_STATUS_URL);
 
-            $this->logLicenseEndpointCacheHeaders($response);
+            //$this->logLicenseEndpointCacheHeaders($response);
 
             $ms = (int) round((microtime(true) - $start) * 1000);
 
