@@ -10,7 +10,8 @@ class ServerStatusController extends Controller
 {
     private const ORDER = ['delivery', 'flowpilot', 'waiterpilot', 'fluxy', 'xbarcly'];
 
-    private const REFRESH_INTERVAL_MINUTES = 10;
+    /** Intervalo mínimo entre medições HTTP (evita rajadas; origem/Cloudflare já cacheiam). */
+    private const REFRESH_INTERVAL_SECONDS = 20;
 
     public function __invoke(ServiceHealthRefresher $refresher)
     {
@@ -19,7 +20,7 @@ class ServerStatusController extends Controller
             ->max('checked_at');
 
         $needsRefresh = $lastCheckedAt === null
-            || Carbon::parse($lastCheckedAt)->lte(now()->subMinutes(self::REFRESH_INTERVAL_MINUTES));
+            || Carbon::parse($lastCheckedAt)->lte(now()->subSeconds(self::REFRESH_INTERVAL_SECONDS));
 
         if ($needsRefresh) {
             $refresher->refresh();

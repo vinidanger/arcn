@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Status dos serviços — Arcn Solutions</title>
-    <meta name="description" content="Status dos sistemas Arcn: medição HTTP no máximo a cada 10 minutos; entre medições usa o último resultado gravado.">
+    <meta name="description" content="Status dos sistemas Arcn: medição HTTP no máximo a cada 20 segundos entre visitas; entre medições usa o último resultado gravado.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
@@ -200,7 +200,7 @@
             @if ($hasData && $checkedAt)
                 <span>Última medição: <strong style="color:var(--text);font-weight:600">{{ $checkedAt }}</strong>
                     @if (!empty($servedFromCache))
-                        <span style="font-weight:500;opacity:.9"> — dados em cache (nova medição só após 10 min)</span>
+                        <span style="font-weight:500;opacity:.9"> — dados em cache (nova medição após 20 s)</span>
                     @endif
                 </span>
             @else
