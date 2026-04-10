@@ -220,9 +220,7 @@
     @endif
 
     <p class="foot-note">
-        Delivery, FlowPilot e WaiterPilot usam o mesmo endpoint HTTP em <span class="mono">license.arcn.com.br</span>.
-        Fluxy e xBarcly compartilham o mesmo host na medição — um único <span class="mono">GET</span> alimenta os dois registros.
-        Nova rodada de medições HTTP só roda se não houver registro ou se a última medição tiver mais de 10 minutos; caso contrário esta página só lê o banco.
+        As medições são realizadas a cada 10 minutos.
     </p>
 </main>
 
