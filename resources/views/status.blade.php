@@ -42,6 +42,7 @@
         nav {
             position: sticky; top: 0; z-index: 50;
             display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem;
             padding: 1.2rem 6%;
             background: rgba(7,8,13,.92);
             backdrop-filter: blur(20px);
@@ -49,6 +50,15 @@
         }
         .logo { display: block; }
         .logo img { height: 32px; width: auto; display: block; max-width: min(160px, 46vw); object-fit: contain; }
+        .btn-back {
+            flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: .45rem;
+            color: var(--muted); text-decoration: none; font-size: .875rem; font-weight: 600;
+            padding: .55rem 1.15rem; border-radius: 50px;
+            border: 1px solid var(--border); background: var(--card);
+            transition: color .2s, border-color .2s, background .2s;
+        }
+        .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
         main { position: relative; z-index: 1; padding: 3rem 6% 5rem; max-width: 960px; margin: 0 auto; }
         .st-head { margin-bottom: 2.5rem; }
         .st-label {
@@ -104,14 +114,82 @@
             padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .95rem; margin-bottom: 2rem;
         }
         .st-empty strong { color: var(--text); }
+
+        footer {
+            background: var(--bg); border-top: 1px solid var(--border);
+            padding: 3rem 6% 2rem; position: relative; z-index: 1;
+        }
+        .fgrid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem; margin-bottom: 2.5rem;
+        }
+        .fbrand p { color: var(--muted); font-size: .88rem; max-width: 270px; line-height: 1.65; margin-top: .65rem; }
+        .fcol h4 { font-weight: 700; font-size: .88rem; margin-bottom: 1.1rem; }
+        .fcol ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+        .fcol ul a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+        .fcol ul a:hover { color: var(--text); }
+        .fbot {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem;
+            padding-top: 1.4rem; border-top: 1px solid var(--border);
+        }
+        .fbot p { color: var(--muted); font-size: .8rem; }
+        .socials { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+        .soc {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none;
+            background: var(--card);
+            border: 1px solid var(--border);
+            transition: transform .2s, border-color .2s, background .2s, color .2s;
+        }
+        .soc svg { width: 18px; height: 18px; display: block; flex-shrink: 0; }
+        .soc:hover { transform: translateY(-2px); }
+        .soc--instagram {
+            background: rgba(188, 24, 136, 0.07);
+            border-color: rgba(188, 24, 136, 0.18);
+            color: #9a87a8;
+        }
+        .soc--instagram:hover {
+            background: rgba(188, 24, 136, 0.12);
+            border-color: rgba(188, 24, 136, 0.28);
+            color: #b8a4c4;
+        }
+        .soc--whatsapp {
+            background: rgba(37, 211, 102, 0.07);
+            border-color: rgba(37, 211, 102, 0.18);
+            color: #6d9e8a;
+        }
+        .soc--whatsapp:hover {
+            background: rgba(37, 211, 102, 0.12);
+            border-color: rgba(37, 211, 102, 0.28);
+            color: #8bb8a0;
+        }
+        .soc--youtube {
+            background: rgba(255, 70, 70, 0.06);
+            border-color: rgba(255, 90, 90, 0.16);
+            color: #a88282;
+        }
+        .soc--youtube:hover {
+            background: rgba(255, 70, 70, 0.11);
+            border-color: rgba(255, 90, 90, 0.26);
+            color: #c49a9a;
+        }
+        @media (max-width: 900px) {
+            .fgrid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .fgrid { grid-template-columns: 1fr; gap: 2rem; }
+        }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="logo">
-        <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions">
-    </div>
+    <a href="{{ url('/') }}" class="logo" style="-webkit-text-fill-color:initial">
+        <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions" height="32" style="display:block">
+    </a>
+    <a href="{{ url('/') }}" class="btn-back" aria-label="Voltar à página principal">← Voltar ao site</a>
 </nav>
 
 <main>
@@ -224,5 +302,56 @@
     </p>
 </main>
 
+<footer>
+    <div class="fgrid">
+        <div class="fbrand">
+            <a href="{{ url('/') }}" class="logo" style="-webkit-text-fill-color:initial">
+                <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions" height="28" style="display:block">
+            </a>
+            <p>Software moderno para negócios que crescem. Produtos prontos, suporte real e tecnologia que funciona.</p>
+        </div>
+        <div class="fcol">
+            <h4>Produtos</h4>
+            <ul>
+                <li><a href="{{ url('/delivery') }}">Sistema de Delivery</a></li>
+                <li><a href="https://fluxy.arcn.com.br" target="_blank" rel="noopener noreferrer">Fluxy</a></li>
+                <li><a href="https://xbarcly.arcn.com.br" target="_blank" rel="noopener noreferrer">xBarcly</a></li>
+                <li><a href="{{ url('/') }}#produtos">WhatsApp API</a></li>
+            </ul>
+        </div>
+        <div class="fcol">
+            <h4>Empresa</h4>
+            <ul>
+                <li><a href="{{ url('/') }}#sobre">Sobre nós</a></li>
+                <li><a href="{{ url('/') }}#contato">Contato</a></li>
+                <li><a href="{{ url('/status') }}">Status dos serviços</a></li>
+            </ul>
+        </div>
+        <div class="fcol">
+            <h4>Contato</h4>
+            <ul>
+                <li><a href="https://wa.me/5515998215892" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+                <li><a href="https://instagram.com/arcndev" target="_blank" rel="noopener noreferrer">@arcndev</a></li>
+                <li><a href="https://www.youtube.com/@arcnsolutions" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="fbot">
+        <p>&copy; <span id="yr"></span> Arcn Solutions. Todos os direitos reservados.</p>
+        <div class="socials">
+            <a href="https://instagram.com/arcndev" target="_blank" rel="noopener noreferrer" class="soc soc--instagram" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="https://wa.me/5515998215892" target="_blank" rel="noopener noreferrer" class="soc soc--whatsapp" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.554 4.104 1.523 5.831L0 24l6.335-1.502A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.014-1.378l-.36-.214-3.731.979.996-3.648-.234-.374A9.79 9.79 0 012.182 12c0-5.424 4.41-9.836 9.836-9.836S21.818 6.576 21.818 12c0 5.424-4.412 9.818-9.818 9.818z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/@arcnsolutions" target="_blank" rel="noopener noreferrer" class="soc soc--youtube" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136c.502-1.883.502-5.813.502-5.813s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>

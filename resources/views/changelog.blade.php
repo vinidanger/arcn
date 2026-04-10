@@ -49,13 +49,16 @@
         }
         .logo img { max-width: min(160px, 46vw); height: auto; max-height: 32px; object-fit: contain; }
         .logo { text-decoration: none; flex-shrink: 1; }
-        .btn-nav {
-            background: linear-gradient(135deg, var(--primary), var(--cyan));
-            color: #fff; text-decoration: none; padding: .6rem 1.4rem;
-            border-radius: 50px; font-size: .875rem; font-weight: 600;
-            transition: opacity .2s, transform .2s; flex-shrink: 0; white-space: nowrap;
+        .btn-back {
+            flex-shrink: 0;
+            display: inline-flex; align-items: center; gap: .45rem;
+            color: var(--muted); text-decoration: none; font-size: .875rem; font-weight: 600;
+            padding: .55rem 1.15rem; border-radius: 50px;
+            border: 1px solid var(--border); background: var(--card);
+            transition: color .2s, border-color .2s, background .2s;
+            white-space: nowrap;
         }
-        .btn-nav:hover { opacity: .85; transform: translateY(-1px); }
+        .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
 
         /* ── HERO ── */
         .cl-hero {
@@ -290,7 +293,7 @@
     <a href="/" class="logo">
         <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions">
     </a>
-    <a href="/delivery" class="btn-nav">&#8592; Voltar</a>
+    <a href="{{ url('/delivery') }}" class="btn-back" aria-label="Voltar à página do Delivery">← Voltar ao Delivery</a>
 </nav>
 
 <!-- HERO -->
