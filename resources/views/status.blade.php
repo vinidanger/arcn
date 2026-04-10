@@ -296,10 +296,6 @@
         </table>
     </div>
     @endif
-
-    <p class="foot-note">
-        As medições são realizadas a cada 10 minutos.
-    </p>
 </main>
 
 <footer>
