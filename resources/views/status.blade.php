@@ -180,6 +180,18 @@
         }
         @media (max-width: 600px) {
             .fgrid { grid-template-columns: 1fr; gap: 2rem; }
+            nav {
+                flex-wrap: wrap;
+                row-gap: 0.65rem;
+                padding-left: max(5%, env(safe-area-inset-left, 0px));
+                padding-right: max(5%, env(safe-area-inset-right, 0px));
+            }
+            .logo { min-width: 0; flex: 1 1 auto; }
+            .btn-back {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.95rem;
+                margin-left: auto;
+            }
         }
     </style>
 </head>

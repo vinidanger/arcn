@@ -279,6 +279,16 @@
         }
 
         @media (max-width: 600px) {
+            nav {
+                flex-wrap: wrap;
+                row-gap: 0.65rem;
+            }
+            .logo { min-width: 0; flex: 1 1 auto; }
+            .btn-back {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.95rem;
+                margin-left: auto;
+            }
             .cl-timeline::before { left: calc(6% + 14px); }
             .cl-dot { width: 30px; height: 30px; }
             .cl-card { grid-template-columns: 30px 1fr; gap: 0 .9rem; }

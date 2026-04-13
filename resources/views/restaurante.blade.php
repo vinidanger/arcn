@@ -32,6 +32,7 @@
             overflow-x: hidden;
             width: 100%;
         }
+        html.nav-menu-open, html.nav-menu-open body { overflow: hidden; }
 
         body {
             background: var(--bg);
@@ -52,32 +53,35 @@
             pointer-events: none; z-index: 0;
         }
 
-        /* ── NAV ── */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+        /* ── NAV (sem backdrop-filter/transform no header — painel mobile fixed cobre a tela) ── */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             display: flex; align-items: center; justify-content: space-between;
             gap: .75rem;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
             padding: max(1.2rem, env(safe-area-inset-top, 0px)) max(6%, env(safe-area-inset-right, 0px)) 1.2rem max(6%, env(safe-area-inset-left, 0px));
-            background: rgba(7,8,13,.92);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            background: rgba(7,8,13,.94);
             border-bottom: 1px solid var(--border);
-            /* Camada própria evita navbar “cortada” ao rolar (Safari / compositing com backdrop-filter) */
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
+        }
+        .site-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex: 0 1 auto;
+            min-width: 0;
         }
         .logo {
             font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.5rem; font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--cyan));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             letter-spacing: -.02em; text-decoration: none;
-            flex-shrink: 1;
+            flex: 1 1 auto;
             min-width: 0;
+            display: flex;
+            align-items: center;
         }
         .logo img {
             max-width: min(160px, 46vw);
@@ -86,7 +90,40 @@
             width: auto;
             object-fit: contain;
         }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: border-color .2s, background .2s;
+        }
+        .nav-toggle:hover { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.04); }
+        .nav-toggle-lines { display: flex; flex-direction: column; gap: 5px; width: 20px; }
+        .nav-toggle-lines span {
+            display: block; height: 2px; width: 100%; background: var(--text);
+            border-radius: 1px; transition: transform .22s ease, opacity .22s;
+        }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(2) { opacity: 0; }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .nav-panel {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; margin: 0; padding: 0; }
         .nav-links a { color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
         .nav-links a:hover { color: #fff; }
         .btn-nav {
@@ -644,7 +681,71 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .nav-links { display: none; }
+            .site-header-bar {
+                flex: 1 1 auto;
+                min-width: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            .site-header .logo,
+            .site-header .nav-toggle {
+                position: relative;
+                z-index: 1102;
+            }
+            .nav-toggle { display: inline-flex; }
+            .nav-panel {
+                position: fixed;
+                inset: 0;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                z-index: 1100;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0;
+                flex: none !important;
+                margin: 0;
+                padding: calc(4.75rem + env(safe-area-inset-top, 0px)) max(6%, env(safe-area-inset-right, 0px)) 2rem max(6%, env(safe-area-inset-left, 0px));
+                background: rgba(7,8,13,.98);
+                overflow-x: hidden;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity .22s ease, visibility .22s;
+            }
+            .site-header.nav-open .nav-panel {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            .nav-panel .nav-links {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                width: 100%;
+            }
+            .nav-panel .nav-links li { border-bottom: 1px solid var(--border); }
+            .nav-panel .nav-links a {
+                display: block;
+                padding: 1.05rem 0;
+                font-size: 1.05rem;
+            }
+            .nav-panel .btn-nav {
+                margin-top: 1.35rem;
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+                display: inline-flex;
+                align-items: center;
+                box-sizing: border-box;
+            }
             .why-grid { grid-template-columns: 1fr; }
             .fgrid { grid-template-columns: 1fr 1fr; }
         }
@@ -652,12 +753,9 @@
             :root {
                 --nav-scroll-pad: calc(4.5rem + env(safe-area-inset-top, 0px));
             }
-            nav {
+            .site-header {
                 padding: max(1rem, env(safe-area-inset-top, 0px)) max(5%, env(safe-area-inset-right, 0px)) 1rem max(5%, env(safe-area-inset-left, 0px));
-                /* Blur forte no mobile costuma causar glitches ao rolar; fundo mais opaco compensa */
                 background: rgba(7,8,13,.97);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
             }
             .btn-nav { padding: .55rem 1rem; font-size: .8rem; }
             section { padding: 4rem 5%; }
@@ -672,19 +770,26 @@
 <body>
 
 <!-- NAV -->
-<nav>
+<header class="site-header" id="site-nav">
+    <div class="site-header-bar">
     <a href="{{ url('/delivery') }}" class="logo" style="-webkit-text-fill-color:initial">
         <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions" height="32" style="display:block">
     </a>
-    <ul class="nav-links">
-        <li><a href="#produtos">Produtos</a></li>
-        <li><a href="#como-funciona">Como Funciona</a></li>
-        <li><a href="#vantagens">Vantagens</a></li>
-        <li><a href="#planos">Planos</a></li>
-        <li><a href="/delivery/changelog">Changelog</a></li>
-    </ul>
-    <a href="https://wa.me/5515998215892" target="_blank" class="btn-nav">Fale Conosco</a>
-</nav>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menu">
+        <span class="nav-toggle-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    </div>
+    <div class="nav-panel" id="primary-nav">
+        <ul class="nav-links">
+            <li><a href="#produtos">Produtos</a></li>
+            <li><a href="#como-funciona">Como Funciona</a></li>
+            <li><a href="#vantagens">Vantagens</a></li>
+            <li><a href="#planos">Planos</a></li>
+            <li><a href="{{ url('/delivery/changelog') }}">Changelog</a></li>
+        </ul>
+        <a href="https://wa.me/5515998215892" target="_blank" rel="noopener noreferrer" class="btn-nav">Fale Conosco</a>
+    </div>
+</header>
 
 <!-- HERO -->
 <section class="hero">
@@ -1671,6 +1776,30 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     }
 
     tick();
+})();
+</script>
+<script>
+(function () {
+    var root = document.getElementById('site-nav');
+    if (!root) return;
+    var btn = document.getElementById('nav-toggle');
+    var panel = document.getElementById('primary-nav');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+        root.classList.toggle('nav-open', open);
+        document.documentElement.classList.toggle('nav-menu-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    }
+    btn.addEventListener('click', function () {
+        setOpen(!root.classList.contains('nav-open'));
+    });
+    panel.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () { setOpen(false); });
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
 })();
 </script>
 </body>

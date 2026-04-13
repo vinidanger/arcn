@@ -26,15 +26,36 @@
             --r:      18px;
         }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            overscroll-behavior-x: none;
+        }
+        html.nav-menu-open,
+        html.nav-menu-open body {
+            overflow: hidden;
+        }
 
         body {
             background: var(--bg);
             color: var(--text);
             font-family: 'Plus Jakarta Sans', sans-serif;
             line-height: 1.6;
-            overflow-x: clip;
             overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            overscroll-behavior-x: none;
+        }
+
+        /* Tudo que não for fixed fica aqui — corta overflow lateral sem brigar com o header */
+        .page-wrap {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100%;
         }
 
         body::before {
@@ -45,14 +66,28 @@
             pointer-events: none;
         }
 
-        /* ── NAV ── */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 1.2rem 6%;
-            background: rgba(7,8,13,.88);
-            backdrop-filter: blur(24px);
+        /* ── NAV (header sem backdrop-filter/transform no wrapper — senão o painel fixed fica “preso” à faixa) ── */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+            padding: 1.2rem max(1rem, env(safe-area-inset-left, 0px)) 1.2rem max(1rem, env(safe-area-inset-right, 0px));
+            background: rgba(7,8,13,.94);
             border-bottom: 1px solid var(--border);
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+        .site-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+            flex: 0 1 auto;
+            min-width: 0;
         }
         .logo {
             font-family: 'Bricolage Grotesque', sans-serif;
@@ -60,8 +95,61 @@
             background: linear-gradient(135deg, var(--p), var(--cyan));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             letter-spacing: -.02em; text-decoration: none;
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            align-items: center;
         }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .logo img {
+            max-width: min(148px, calc(100vw - 4.5rem));
+            height: auto;
+            max-height: 32px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+        .nav-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: border-color .2s, background .2s;
+        }
+        .nav-toggle:hover { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.04); }
+        .nav-toggle-lines { display: flex; flex-direction: column; gap: 5px; width: 20px; }
+        .nav-toggle-lines span {
+            display: block; height: 2px; width: 100%; background: var(--text);
+            border-radius: 1px; transition: transform .22s ease, opacity .22s;
+        }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(2) { opacity: 0; }
+        .site-header.nav-open .nav-toggle-lines span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .nav-panel {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.75rem, 2vw, 2rem);
+            flex: 1;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+        .nav-links {
+            display: flex;
+            gap: clamp(0.75rem, 2vw, 2rem);
+            list-style: none;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+        }
         .nav-links a { color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500; transition: color .2s; }
         .nav-links a:hover { color: #fff; }
         .btn-nav {
@@ -69,16 +157,27 @@
             color: #fff; text-decoration: none; padding: .6rem 1.4rem;
             border-radius: 50px; font-size: .875rem; font-weight: 600;
             transition: opacity .2s, transform .2s;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         .btn-nav:hover { opacity: .85; transform: translateY(-1px); }
 
-        /* ── ORB ── */
+        /* ── ORB (blur vaza da caixa — orbs ficam num layer com overflow:hidden) ── */
         .orb {
             position: absolute; border-radius: 50%;
-            filter: blur(90px); pointer-events: none;
+            filter: blur(72px); pointer-events: none;
             animation: float 9s ease-in-out infinite;
         }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-28px)} }
+
+        .hero-decor {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            contain: paint;
+        }
 
         /* ── HERO ── */
         .hero {
@@ -89,10 +188,13 @@
             padding: 9rem 6% 6rem;
             position: relative; z-index: 1;
             overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
-        .hero .o1 { width:500px;height:500px;background:rgba(108,99,255,.13);top:0;left:-10%; }
-        .hero .o2 { width:350px;height:350px;background:rgba(0,212,255,.09);bottom:5%;right:-8%;animation-delay:-4s; }
-        .hero .o3 { width:280px;height:280px;background:rgba(0,229,160,.07);top:60%;left:35%;animation-delay:-2s; }
+        .hero-decor .o1 { width:500px;height:500px;background:rgba(108,99,255,.13);top:0;left:-10%; }
+        .hero-decor .o2 { width:350px;height:350px;background:rgba(0,212,255,.09);bottom:5%;right:-8%;animation-delay:-4s; }
+        .hero-decor .o3 { width:280px;height:280px;background:rgba(0,229,160,.07);top:60%;left:35%;animation-delay:-2s; }
 
         .badge {
             display: inline-flex; align-items: center; gap: .5rem;
@@ -150,6 +252,10 @@
         .product-strip {
             display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
             position: relative; z-index: 1;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 0 0.25rem;
         }
         .strip-item {
             display: flex; align-items: center; gap: .55rem;
@@ -164,7 +270,15 @@
         }
 
         /* ── SECTION COMMON ── */
-        section { padding: 6rem 6%; position: relative; z-index: 1; }
+        section {
+            padding: 6rem 6%;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
         .slabel { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--p); margin-bottom: .7rem; }
         .stitle {
             font-family: 'Bricolage Grotesque', sans-serif;
@@ -186,8 +300,9 @@
 
         .pgrid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1.5rem; margin-top: 3.5rem;
+            min-width: 0;
         }
 
         .pcard {
@@ -197,6 +312,7 @@
             transition: transform .3s, border-color .3s, box-shadow .3s;
             text-decoration: none; color: inherit;
             display: flex; flex-direction: column; gap: 1.2rem;
+            min-width: 0;
         }
         .pcard:hover {
             transform: translateY(-5px);
@@ -268,8 +384,10 @@
         /* ── WHY ── */
         #sobre { background: var(--bg2); }
         .why-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 4rem; align-items: center; margin-top: 3rem;
+            min-width: 0;
         }
         .why-items { display: flex; flex-direction: column; gap: 1.7rem; }
         .wi { display: flex; gap: .95rem; }
@@ -282,7 +400,10 @@
         .wi p  { color: var(--muted); font-size: .88rem; }
 
         .nums-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: .9rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: .9rem;
+            min-width: 0;
             background: var(--card); border: 1px solid var(--border);
             border-radius: var(--r); padding: 2rem;
         }
@@ -330,10 +451,16 @@
         footer {
             background: var(--bg); border-top: 1px solid var(--border);
             padding: 3rem 6% 2rem; position: relative; z-index: 1;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
         .fgrid {
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
             gap: 3rem; margin-bottom: 2.5rem;
+            min-width: 0;
         }
         .fbrand p { color: var(--muted); font-size: .88rem; max-width: 270px; line-height: 1.65; margin-top: .65rem; }
         .fcol h4 { font-weight: 700; font-size: .88rem; margin-bottom: 1.1rem; }
@@ -390,43 +517,130 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .nav-links { display: none; }
+            .site-header {
+                gap: 0.5rem;
+                padding: max(1rem, env(safe-area-inset-top, 0px)) max(0.75rem, env(safe-area-inset-right, 0px)) 1rem max(0.75rem, env(safe-area-inset-left, 0px));
+            }
+            .site-header-bar {
+                flex: 1 1 auto;
+                min-width: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            .logo img {
+                max-width: min(132px, calc(100vw - 3.75rem));
+            }
+            .site-header .logo,
+            .site-header .nav-toggle {
+                position: relative;
+                z-index: 1102;
+            }
+            .nav-toggle { display: inline-flex; }
+            /* Painel fora do fluxo: só a barra (logo + toggle) entra no flex — evita cortar o hambúrguer */
+            .nav-panel {
+                position: fixed;
+                inset: 0;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                z-index: 1100;
+                flex: none !important;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0;
+                padding: calc(4.75rem + env(safe-area-inset-top, 0px)) max(6%, env(safe-area-inset-right, 0px)) 2rem max(6%, env(safe-area-inset-left, 0px));
+                background: rgba(7,8,13,.98);
+                border: none;
+                border-bottom: none;
+                overflow-x: hidden;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity .22s ease, visibility .22s;
+            }
+            .site-header.nav-open .nav-panel {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+            .nav-panel .nav-links {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                width: 100%;
+            }
+            .nav-panel .nav-links li {
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-panel .nav-links a {
+                display: block;
+                padding: 1.05rem 0;
+                font-size: 1.05rem;
+            }
+            .nav-panel .btn-nav {
+                margin-top: 1.35rem;
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+                display: inline-flex;
+                align-items: center;
+                box-sizing: border-box;
+            }
             .pgrid { grid-template-columns: 1fr; }
             .pcard.span2 { flex-direction: column; }
             .why-grid { grid-template-columns: 1fr; }
             .fgrid { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 600px) {
-            nav { padding: 1rem 5%; }
+            .site-header { padding: 1rem max(5%, env(safe-area-inset-left, 0px)) 1rem max(5%, env(safe-area-inset-right, 0px)); }
             section { padding: 4rem 5%; }
             .hero { padding: 7rem 5% 4rem; }
             .cta-box { padding: 2.5rem 1.5rem; }
             .fgrid { grid-template-columns: 1fr; gap: 2rem; }
-            .orb { display: none; }
+            .hero-decor .orb { display: none; }
         }
     </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
+<header class="site-header" id="site-nav">
+    <div class="site-header-bar">
     <a href="/" class="logo" style="-webkit-text-fill-color:initial">
         <img src="{{ asset('storage/images/logo.png') }}" alt="Arcn Solutions" height="32" style="display:block">
     </a>
-    <ul class="nav-links">
-        <li><a href="#produtos">Produtos</a></li>
-        <li><a href="#sobre">Sobre</a></li>
-        <li><a href="#contato">Contato</a></li>
-        <li><a href="{{ url('/status') }}">Status</a></li>
-    </ul>
-    <a href="https://wa.me/5515998215892" target="_blank" class="btn-nav">Fale Conosco</a>
-</nav>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menu">
+        <span class="nav-toggle-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    </div>
+    <div class="nav-panel" id="primary-nav">
+        <ul class="nav-links">
+            <li><a href="#produtos">Produtos</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li><a href="{{ url('/status') }}">Status</a></li>
+        </ul>
+        <a href="https://wa.me/5515998215892" target="_blank" rel="noopener noreferrer" class="btn-nav">Fale Conosco</a>
+    </div>
+</header>
+
+<div class="page-wrap">
 
 <!-- HERO -->
 <section class="hero">
-    <div class="orb o1"></div>
-    <div class="orb o2"></div>
-    <div class="orb o3"></div>
+    <div class="hero-decor" aria-hidden="true">
+        <div class="orb o1"></div>
+        <div class="orb o2"></div>
+        <div class="orb o3"></div>
+    </div>
 
     <div class="badge">
         <span class="bdot"></span>
@@ -728,6 +942,32 @@
     </div>
 </footer>
 
+</div><!-- /.page-wrap -->
+
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+(function () {
+    var root = document.getElementById('site-nav');
+    if (!root) return;
+    var btn = document.getElementById('nav-toggle');
+    var panel = document.getElementById('primary-nav');
+    if (!btn || !panel) return;
+    function setOpen(open) {
+        root.classList.toggle('nav-open', open);
+        document.documentElement.classList.toggle('nav-menu-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    }
+    btn.addEventListener('click', function () {
+        setOpen(!root.classList.contains('nav-open'));
+    });
+    panel.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () { setOpen(false); });
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+})();
+</script>
 </body>
 </html>
