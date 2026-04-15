@@ -12,7 +12,7 @@ class ServiceHealthRefresher
     private const LICENSE_STATUS_URL = 'https://license.arcn.com.br/app_delivery_license/status.php';
     //private const LICENSE_STATUS_URL = 'http://147.79.81.133/app_delivery_license/status.php';
 
-    /** Mesmo host para Fluxy e xBarcly — uma única requisição HTTP atende os dois. */
+    /** Mesmo host para Fluxy, xBarcly e iHub — uma única requisição HTTP atende os três. */
     private const FLUXY_XBARCLY_CHECK_URL = 'http://147.79.81.133';
 
     private const DEGRADED_MS = 2000;
@@ -30,6 +30,7 @@ class ServiceHealthRefresher
             $this->row('waiterpilot', 'WaiterPilot', 'Licenças & delivery', 'HTTP', self::LICENSE_STATUS_URL, $license, $checkedAt),
             $this->row('fluxy', 'Fluxy', 'Sites públicos', 'HTTP', self::FLUXY_XBARCLY_CHECK_URL, $fluxyXbarcly, $checkedAt),
             $this->row('xbarcly', 'xBarcly', 'Sites públicos', 'HTTP', self::FLUXY_XBARCLY_CHECK_URL, $fluxyXbarcly, $checkedAt),
+            $this->row('ihub', 'iHub', 'Sites públicos', 'HTTP', self::FLUXY_XBARCLY_CHECK_URL, $fluxyXbarcly, $checkedAt),
         ];
 
         DB::transaction(function () use ($rows) {

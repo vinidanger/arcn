@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class ServerStatusController extends Controller
 {
-    private const ORDER = ['delivery', 'flowpilot', 'waiterpilot', 'fluxy', 'xbarcly'];
+    private const ORDER = ['delivery', 'flowpilot', 'waiterpilot', 'fluxy', 'xbarcly', 'ihub'];
 
     /** Intervalo mínimo entre medições HTTP (evita rajadas; origem/Cloudflare já cacheiam). */
     private const REFRESH_INTERVAL_SECONDS = 20;

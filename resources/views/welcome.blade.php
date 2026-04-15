@@ -250,15 +250,19 @@
 
         /* Products mini-preview strip */
         .product-strip {
-            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+            display: flex; gap: 1rem; justify-content: center; flex-wrap: nowrap;
             position: relative; z-index: 1;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
             padding: 0 0.25rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable;
         }
         .strip-item {
             display: flex; align-items: center; gap: .55rem;
+            flex-shrink: 0;
             background: var(--card); border: 1px solid var(--border);
             border-radius: 50px; padding: .5rem 1.1rem;
             font-size: .82rem; font-weight: 600; color: #c0c4d8;
@@ -300,14 +304,14 @@
 
         .pgrid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 1.5rem; margin-top: 3.5rem;
             min-width: 0;
         }
 
         .pcard {
             background: var(--card); border: 1px solid var(--border);
-            border-radius: var(--r); padding: 2.4rem;
+            border-radius: var(--r); padding: 2.2rem;
             position: relative; overflow: hidden;
             transition: transform .3s, border-color .3s, box-shadow .3s;
             text-decoration: none; color: inherit;
@@ -318,7 +322,7 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 60px rgba(0,0,0,.4);
         }
-        .pcard.span2 { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 2.5rem; }
+        .pcard.span-full { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 2.5rem; }
 
         /* color accents per product */
         .pcard.c-p  { border-color: rgba(108,99,255,.2); }
@@ -329,6 +333,8 @@
         .pcard.c-gr:hover { border-color: rgba(0,229,160,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(0,229,160,.08); }
         .pcard.c-or { border-color: rgba(255,159,67,.15); }
         .pcard.c-or:hover { border-color: rgba(255,159,67,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(255,159,67,.08); }
+        .pcard.c-pk { border-color: rgba(255,101,132,.18); }
+        .pcard.c-pk:hover { border-color: rgba(255,101,132,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(255,101,132,.1); }
 
         .pcard::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -337,6 +343,7 @@
         .pcard.c-cy::before { background: linear-gradient(90deg, var(--cyan), #00ffcc); }
         .pcard.c-gr::before { background: linear-gradient(90deg, var(--green), #00d4ff); }
         .pcard.c-or::before { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+        .pcard.c-pk::before { background: linear-gradient(90deg, #ea1d2c, var(--pink)); }
 
         .picon {
             width: 52px; height: 52px; border-radius: 14px;
@@ -347,24 +354,35 @@
         .pi-cy { background: rgba(0,212,255,.11); }
         .pi-gr { background: rgba(0,229,160,.11); }
         .pi-or { background: rgba(255,159,67,.11); }
+        .pi-pk { background: rgba(255,101,132,.1); }
 
-        .pcard-body { flex: 1; }
+        .pcard-body { flex: 1; display: flex; flex-direction: column; }
 
         .pname {
             font-family: 'Bricolage Grotesque', sans-serif;
             font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .3rem;
+        }
+        .pname-row {
+            display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; margin-bottom: .3rem;
+        }
+        .pname-row .pname { margin-bottom: 0; }
+        .pdomain {
+            font-size: .7rem; font-weight: 600;
+            padding: .18rem .55rem; border-radius: 50px;
+            line-height: 1.3;
         }
         .pcat { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .75rem; }
         .pcat.cp  { color: var(--p); }
         .pcat.ccy { color: var(--cyan); }
         .pcat.cgr { color: var(--green); }
         .pcat.cor { color: var(--orange); }
+        .pcat.cpk { color: var(--pink); }
 
-        .pdesc { color: var(--muted); font-size: .93rem; line-height: 1.65; margin-bottom: 1.2rem; }
+        .pdesc { color: var(--muted); font-size: .92rem; line-height: 1.65; margin-bottom: 1.2rem; flex: 1; }
 
-        .ptags { display: flex; flex-wrap: wrap; gap: .45rem; }
+        .ptags { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.4rem; }
         .ptag {
-            font-size: .75rem; font-weight: 600; padding: .28rem .7rem;
+            font-size: .72rem; font-weight: 600; padding: .25rem .65rem;
             border-radius: 50px; border: 1px solid var(--border);
             color: var(--muted);
         }
@@ -379,6 +397,7 @@
         .plink.lcy { color: var(--cyan); }
         .plink.lgr { color: var(--green); }
         .plink.lor { color: var(--orange); }
+        .plink.lpk { color: var(--pink); }
         .plink:hover { gap: .7rem; }
 
         /* ── WHY ── */
@@ -595,8 +614,8 @@
                 align-items: center;
                 box-sizing: border-box;
             }
-            .pgrid { grid-template-columns: 1fr; }
-            .pcard.span2 { flex-direction: column; }
+            .pgrid { grid-template-columns: 1fr 1fr; }
+            .pcard.span-full { flex-direction: column; }
             .why-grid { grid-template-columns: 1fr; }
             .fgrid { grid-template-columns: 1fr 1fr; }
         }
@@ -604,6 +623,7 @@
             .site-header { padding: 1rem max(5%, env(safe-area-inset-left, 0px)) 1rem max(5%, env(safe-area-inset-right, 0px)); }
             section { padding: 4rem 5%; }
             .hero { padding: 7rem 5% 4rem; }
+            .pgrid { grid-template-columns: 1fr; }
             .cta-box { padding: 2.5rem 1.5rem; }
             .fgrid { grid-template-columns: 1fr; gap: 2rem; }
             .hero-decor .orb { display: none; }
@@ -686,6 +706,10 @@
             <span class="strip-dot" style="background:var(--orange)"></span>
             WhatsApp API
         </div>
+        <div class="strip-item">
+            <span class="strip-dot" style="background:var(--pink)"></span>
+            iHub
+        </div>
     </div>
 </section>
 
@@ -701,8 +725,8 @@
 
     <div class="pgrid">
 
-        <!-- Multi-Cardápios (span 2 — destaque) -->
-        <a href="/delivery" class="pcard c-p span2">
+        <!-- Sistema de Delivery — destaque principal (largura total) -->
+        <a href="/delivery" class="pcard c-p span-full">
             <div class="picon pi-p" style="margin-top:.2rem">&#x1F37D;&#xFE0F;</div>
             <div class="pcard-body">
                 <div class="pname">Sistema de Delivery</div>
@@ -713,7 +737,7 @@
                     (<strong style="color:var(--text)">FlowPilot</strong>) e app mobile do garçom para comandas digitais
                     (<strong style="color:var(--text)">WaiterPilot</strong>). Tudo integrado, sem mensalidade.
                 </p>
-                <div class="ptags" style="margin-bottom:1.2rem">
+                <div class="ptags">
                     <span class="ptag">Cardápio Digital</span>
                     <span class="ptag">Pedidos Online</span>
                     <span class="ptag">Gestor de Cozinha</span>
@@ -730,22 +754,22 @@
         </a>
 
         <!-- Fluxy -->
-        <a href="https://fluxy.arcn.com.br" target="_blank" class="pcard c-cy" style="text-decoration:none;color:inherit">
+        <a href="https://fluxy.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-cy">
             <div class="picon pi-cy">&#x1F6F5;</div>
             <div class="pcard-body">
-                <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem">
-                    <div class="pname" style="margin-bottom:0">Fluxy</div>
-                    <span style="font-size:.72rem;color:var(--cyan);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:.18rem .55rem;border-radius:50px;font-weight:600">fluxy.arcn.com.br</span>
+                <div class="pname-row">
+                    <div class="pname">Fluxy</div>
+                    <span class="pdomain" style="color:var(--cyan);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2)">fluxy.arcn.com.br</span>
                 </div>
                 <div class="pcat ccy">App de Entregas</div>
                 <p class="pdesc">
-                    Plataforma de entregas que conecta empresas a entregadores de confiança. Solicite entregas, rastreie em tempo real e gerencie toda a logística da sua operação.
+                    Conecta empresas a entregadores de confiança. Solicite entregas, rastreie em tempo real e gerencie toda a logística.
                 </p>
-                <div class="ptags" style="margin-bottom:1.2rem">
-                    <span class="ptag">Rastreamento em tempo real</span>
-                    <span class="ptag">Entregadores cadastrados</span>
-                    <span class="ptag">Automação de pedidos</span>
-                    <span class="ptag">Painel de gestão</span>
+                <div class="ptags">
+                    <span class="ptag">Rastreamento</span>
+                    <span class="ptag">Entregadores</span>
+                    <span class="ptag">Automação</span>
+                    <span class="ptag">Painel</span>
                 </div>
                 <span class="plink lcy">
                     Acessar
@@ -755,20 +779,19 @@
         </a>
 
         <!-- xBarcly -->
-        <a href="https://xbarcly.arcn.com.br" target="_blank" class="pcard c-gr" style="text-decoration:none;color:inherit">
+        <a href="https://xbarcly.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-gr">
             <div class="picon pi-gr">&#x1F4F7;</div>
             <div class="pcard-body">
-                <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem">
-                    <div class="pname" style="margin-bottom:0">xBarcly</div>
-                    <span style="font-size:.72rem;color:var(--green);background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);padding:.18rem .55rem;border-radius:50px;font-weight:600">xbarcly.arcn.com.br</span>
+                <div class="pname-row">
+                    <div class="pname">xBarcly</div>
+                    <span class="pdomain" style="color:var(--green);background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2)">xbarcly.arcn.com.br</span>
                 </div>
                 <div class="pcat cgr">API de Código de Barras</div>
                 <p class="pdesc">
-                    API de consulta EAN para integração em qualquer sistema. Busque informações completas de produtos pelo código de barras — ideal para PDVs, estoque e e-commerce.
+                    Consulta EAN para qualquer sistema. Informações completas de produtos pelo código de barras — ideal para PDVs, estoque e e-commerce.
                 </p>
-                <div class="ptags" style="margin-bottom:1.2rem">
+                <div class="ptags">
                     <span class="ptag">EAN-13 & EAN-8</span>
-                    <span class="ptag">Produtos brasileiros</span>
                     <span class="ptag">REST API</span>
                     <span class="ptag">Fácil integração</span>
                 </div>
@@ -779,16 +802,43 @@
             </div>
         </a>
 
-        <!-- WhatsApp API -->
-        <div class="pcard c-or" style="grid-column: 1 / -1">
+        <!-- iHub -->
+        <a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-pk">
+            <div class="picon pi-pk" style="padding:.45rem">
+                <img src="{{ asset('storage/images/ihub/logo.png') }}" alt="iHub" width="40" height="40" style="width:40px;height:40px;object-fit:contain;display:block" decoding="async">
+            </div>
+            <div class="pcard-body">
+                <div class="pname-row">
+                    <div class="pname">iHub</div>
+                    <span class="pdomain" style="color:var(--pink);background:rgba(255,101,132,.08);border:1px solid rgba(255,101,132,.22)">ihub.arcn.com.br</span>
+                </div>
+                <div class="pcat cpk">Integração iFood</div>
+                <p class="pdesc">
+                    Conecte seu sistema ao iFood sem desenvolver a API. Pedidos e eventos via webhook, homologado pelo iFood, com retry automático.
+                </p>
+                <div class="ptags">
+                    <span class="ptag">Homologado iFood</span>
+                    <span class="ptag">Webhook</span>
+                    <span class="ptag">Eventos real-time</span>
+                    <span class="ptag">R$ 49/mês</span>
+                </div>
+                <span class="plink lpk">
+                    Conhecer
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+        </a>
+
+        <!-- WhatsApp API — em breve (largura total) -->
+        <div class="pcard c-or span-full">
             <div class="picon pi-or" style="margin-top:.2rem">&#x1F4AC;</div>
             <div class="pcard-body">
                 <div class="pname">WhatsApp API</div>
                 <div class="pcat cor">Automação & Atendimento</div>
                 <p class="pdesc">
-                    Solução completa de automação via WhatsApp: mensagens de saudação automáticas, chatbot inteligente, chat com IA integrada e muito mais. Atenda mais clientes com menos esforço.
+                    Automação completa via WhatsApp: saudações automáticas, chatbot inteligente, chat com IA integrada e multi-atendimento. Atenda mais clientes com menos esforço.
                 </p>
-                <div class="ptags" style="margin-bottom:1.2rem">
+                <div class="ptags">
                     <span class="ptag">Mensagens automáticas</span>
                     <span class="ptag">Chatbot</span>
                     <span class="ptag">Chat com IA</span>
@@ -851,7 +901,7 @@
 
         <div class="nums-grid">
             <div class="ncard">
-                <div class="nval">4</div>
+                <div class="nval">5</div>
                 <div class="nlbl">Produtos</div>
             </div>
             <div class="ncard">
@@ -906,6 +956,7 @@
                 <li><a href="/delivery">Sistema de Delivery</a></li>
                 <li><a href="https://fluxy.arcn.com.br" target="_blank">Fluxy</a></li>
                 <li><a href="https://xbarcly.arcn.com.br" target="_blank">xBarcly</a></li>
+                <li><a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer">iHub</a></li>
                 <li><a href="#produtos">WhatsApp API</a></li>
             </ul>
         </div>
