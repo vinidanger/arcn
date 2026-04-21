@@ -59,7 +59,7 @@
             transition: color .2s, border-color .2s, background .2s;
         }
         .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
-        main { position: relative; z-index: 1; padding: 3rem 6% 5rem; max-width: 960px; margin: 0 auto; }
+        main { position: relative; z-index: 1; padding: 3rem 6% 5rem; max-width: min(1320px, 94vw); margin: 0 auto; }
         .st-head { margin-bottom: 2.5rem; }
         .st-label {
             font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--p); margin-bottom: .6rem;
@@ -75,34 +75,28 @@
         }
         .st-meta { color: var(--muted); font-size: .9rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
         .legend {
-            display: flex; flex-wrap: nowrap; gap: 1.25rem; margin: 2rem 0 1.5rem;
+            display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; margin: 2rem 0 1.5rem;
             padding: 1rem 1.25rem;
             background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        .legend-item { display: flex; align-items: center; gap: .55rem; font-size: .82rem; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+        .legend-item { display: flex; align-items: center; gap: .55rem; font-size: .82rem; color: var(--muted); }
         .sq { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
         .sq--ok { background: var(--ok); box-shadow: 0 0 12px rgba(34,197,94,.35); }
         .sq--warn { background: var(--warn); box-shadow: 0 0 12px rgba(245,158,11,.35); }
         .sq--bad { background: var(--bad); box-shadow: 0 0 12px rgba(239,68,68,.35); }
         .summary-grid {
-            display: flex;
-            flex-wrap: nowrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
             gap: 1rem;
             margin-bottom: 2.5rem;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 2px;
         }
         .sum-card {
-            flex: 1 1 0;
-            min-width: 100px;
+            min-width: 0;
             background: var(--card); border: 1px solid var(--border); border-radius: 14px;
             padding: 1.15rem 1rem; text-align: center;
         }
         .sum-card .sq { margin: 0 auto .65rem; width: 14px; height: 14px; border-radius: 4px; }
-        .sum-name { font-weight: 700; font-size: .88rem; margin-bottom: .2rem; }
+        .sum-name { font-weight: 700; font-size: .88rem; margin-bottom: .2rem; line-height: 1.25; word-break: break-word; hyphens: auto; }
         .sum-ms { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
         .table-wrap {
             background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
@@ -333,7 +327,7 @@
                 <li><a href="https://fluxy.arcn.com.br" target="_blank" rel="noopener noreferrer">Fluxy</a></li>
                 <li><a href="https://xbarcly.arcn.com.br" target="_blank" rel="noopener noreferrer">xBarcly</a></li>
                 <li><a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer">iHub</a></li>
-                <li><a href="{{ url('/') }}#produtos">WhatsApp API</a></li>
+                <li><a href="https://wcore.cloud" target="_blank" rel="noopener noreferrer">WCore</a></li>
             </ul>
         </div>
         <div class="fcol">

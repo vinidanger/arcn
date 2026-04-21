@@ -21,9 +21,16 @@
             --pink:   #ff6584;
             --green:  #00e5a0;
             --orange: #ff9f43;
+            /* WhatsApp brand (WCore) */
+            --wa:      #25d366;
+            --wa-teal: #128c7e;
             --text:   #e8eaf6;
             --muted:  #7b80a0;
             --r:      18px;
+            /* Cards produtos — superfície & ritmo */
+            --card-radius: 22px;
+            --card-edge: rgba(255,255,255,.055);
+            --card-inner-top: rgba(255,255,255,.045);
         }
 
         html {
@@ -263,14 +270,23 @@
         .strip-item {
             display: flex; align-items: center; gap: .55rem;
             flex-shrink: 0;
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: 50px; padding: .5rem 1.1rem;
-            font-size: .82rem; font-weight: 600; color: #c0c4d8;
-            transition: border-color .2s;
+            background: linear-gradient(165deg, rgba(255,255,255,.06) 0%, rgba(14,16,24,.92) 100%);
+            border: 1px solid var(--card-edge);
+            border-radius: 100px;
+            padding: .48rem 1.15rem;
+            font-size: .78rem; font-weight: 600; letter-spacing: .02em;
+            color: #aeb4d4;
+            box-shadow: 0 1px 0 rgba(255,255,255,.04) inset;
+            transition: border-color .35s, transform .35s, box-shadow .35s;
         }
-        .strip-item:hover { border-color: rgba(108,99,255,.35); }
+        .strip-item:hover {
+            border-color: rgba(108,99,255,.28);
+            box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 12px 32px -18px rgba(108,99,255,.2);
+            transform: translateY(-1px);
+        }
         .strip-dot {
-            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+            width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+            box-shadow: 0 0 0 2px rgba(255,255,255,.06);
         }
 
         /* ── SECTION COMMON ── */
@@ -299,106 +315,631 @@
             margin: 0 6%;
         }
 
-        /* ── PRODUCTS GRID ── */
+        /* ── PRODUTOS — showcase (split + tiles + área de imagem) ── */
         #produtos { background: var(--bg); }
 
-        .pgrid {
+        .product-showcase {
+            margin-top: 3rem;
+            max-width: 1180px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 0;
+        }
+
+        .product-tiles {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 1.5rem; margin-top: 3.5rem;
+            gap: 1.25rem;
             min-width: 0;
         }
 
-        .pcard {
-            background: var(--card); border: 1px solid var(--border);
-            border-radius: var(--r); padding: 2.2rem;
-            position: relative; overflow: hidden;
-            transition: transform .3s, border-color .3s, box-shadow .3s;
-            text-decoration: none; color: inherit;
-            display: flex; flex-direction: column; gap: 1.2rem;
+        .pblock {
+            position: relative;
+            display: block;
+            overflow: hidden;
+            border-radius: var(--card-radius);
+            border: 1px solid var(--card-edge);
+            background:
+                linear-gradient(155deg, var(--card-inner-top) 0%, transparent 46%),
+                linear-gradient(180deg, #16182a 0%, #0c0e16 100%);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.45) inset,
+                0 1px 0 rgba(255,255,255,.04) inset,
+                0 28px 56px -32px rgba(0,0,0,.75);
+            text-decoration: none;
+            color: inherit;
+            isolation: isolate;
+            transition: transform .45s cubic-bezier(.22, 1, .36, 1), border-color .4s, box-shadow .45s;
+        }
+        .pblock:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.4) inset,
+                0 1px 0 rgba(255,255,255,.06) inset,
+                0 36px 72px -36px rgba(0,0,0,.85);
+        }
+
+        .pblock::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(ellipse 90% 55% at 100% -8%, rgba(255,255,255,.06), transparent 52%);
+            pointer-events: none;
+            z-index: 0;
+            opacity: .65;
+        }
+
+        /* Destaque em duas colunas: texto | imagem */
+        .pblock--split {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+            gap: clamp(1.5rem, 3.5vw, 2.75rem);
+            align-items: center;
+            padding: clamp(1.75rem, 3vw, 2.6rem) clamp(1.75rem, 3vw, 2.75rem);
+        }
+        /* Desktop: imagem à esquerda, texto à direita */
+        .pblock--split-reverse .pblock__visual { order: 1; }
+        .pblock--split-reverse .pblock__body { order: 2; }
+
+        /* Três colunas: só conteúdo (sem área de foto) */
+        .pblock--compact {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            padding: 1.45rem 1.4rem 1.5rem;
+        }
+        .pblock--compact .pblock__body {
+            padding: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pblock__visual {
+            position: relative;
+            z-index: 1;
             min-width: 0;
         }
-        .pcard:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0,0,0,.4);
-        }
-        .pcard.span-full { grid-column: 1 / -1; flex-direction: row; align-items: flex-start; gap: 2.5rem; }
 
-        /* color accents per product */
-        .pcard.c-p  { border-color: rgba(108,99,255,.2); }
-        .pcard.c-p:hover  { border-color: rgba(108,99,255,.5); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(108,99,255,.1); }
-        .pcard.c-cy { border-color: rgba(0,212,255,.15); }
-        .pcard.c-cy:hover { border-color: rgba(0,212,255,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(0,212,255,.08); }
-        .pcard.c-gr { border-color: rgba(0,229,160,.15); }
-        .pcard.c-gr:hover { border-color: rgba(0,229,160,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(0,229,160,.08); }
-        .pcard.c-or { border-color: rgba(255,159,67,.15); }
-        .pcard.c-or:hover { border-color: rgba(255,159,67,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(255,159,67,.08); }
-        .pcard.c-pk { border-color: rgba(255,101,132,.18); }
-        .pcard.c-pk:hover { border-color: rgba(255,101,132,.45); box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(255,101,132,.1); }
-
-        .pcard::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        /* Moldura tipo “tela” + slot para screenshot */
+        .pblock__frame {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-radius: 14px;
+            overflow: hidden;
+            background: linear-gradient(165deg, rgba(255,255,255,.06) 0%, rgba(8,10,18,.94) 100%);
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,.06) inset,
+                0 20px 50px -28px rgba(0,0,0,.85);
+            transition: transform .5s cubic-bezier(.22, 1, .36, 1), box-shadow .45s;
         }
-        .pcard.c-p::before  { background: linear-gradient(90deg, var(--p), var(--cyan)); }
-        .pcard.c-cy::before { background: linear-gradient(90deg, var(--cyan), #00ffcc); }
-        .pcard.c-gr::before { background: linear-gradient(90deg, var(--green), #00d4ff); }
-        .pcard.c-or::before { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-        .pcard.c-pk::before { background: linear-gradient(90deg, #ea1d2c, var(--pink)); }
+        .pblock:hover .pblock__frame {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,.08) inset,
+                0 28px 60px -30px rgba(0,0,0,.9);
+        }
+        .pblock--split .pblock__frame { aspect-ratio: 5 / 3; min-height: 200px; }
+
+        /* Galeria — carrossel de slides (setas + indicadores) */
+        .pblock__slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .pblock__slider-viewport {
+            --slides: 1;
+            --index: 0;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 160px;
+            background: rgba(0,0,0,.22);
+            isolation: isolate;
+            contain: paint;
+            border-radius: 0 0 12px 12px;
+        }
+        @supports (overflow: clip) {
+            .pblock__slider-viewport { overflow: clip; }
+        }
+        .pblock__slider-track {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(0, calc(100% / var(--slides)));
+            height: 100%;
+            width: calc(var(--slides) * 100%);
+            min-width: 0;
+            transform: translate3d(calc(var(--index) * -100% / var(--slides)), 0, 0);
+            transition: transform 0.48s cubic-bezier(.22, 1, .36, 1);
+            will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .pblock__slider-slide {
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+            min-height: 160px;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .pblock__slider-slide img {
+            width: 100%;
+            height: 100%;
+            min-height: 160px;
+            max-width: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+            cursor: zoom-in;
+        }
+        .pblock__slider-nav {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 .35rem;
+        }
+        .pblock__slider-btn {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,.14);
+            background: rgba(10,12,22,.72);
+            color: rgba(255,255,255,.88);
+            cursor: pointer;
+            transition: background .2s, border-color .2s, opacity .2s, transform .2s;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .pblock__slider-btn:hover:not(:disabled) {
+            background: rgba(108,99,255,.25);
+            border-color: rgba(108,99,255,.4);
+            transform: scale(1.04);
+        }
+        .pblock__slider-btn:disabled {
+            opacity: .28;
+            cursor: default;
+        }
+        .pblock__slider-btn svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+        .pblock__slider-dots {
+            position: absolute;
+            bottom: .65rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: .4rem;
+            pointer-events: auto;
+            padding: .35rem .55rem;
+            border-radius: 100px;
+            background: rgba(0,0,0,.4);
+            border: 1px solid rgba(255,255,255,.08);
+            backdrop-filter: blur(6px);
+        }
+        .pblock__slider-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            padding: 0;
+            border: none;
+            background: rgba(255,255,255,.28);
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+        .pblock__slider-dot.is-active {
+            background: rgba(255,255,255,.92);
+            transform: scale(1.15);
+        }
+        .pblock--hue-p .pblock__slider-btn:hover:not(:disabled) {
+            background: rgba(108,99,255,.28);
+            border-color: rgba(108,99,255,.42);
+        }
+        .pblock--hue-wa .pblock__slider-btn:hover:not(:disabled) {
+            background: rgba(37,211,102,.22);
+            border-color: rgba(37,211,102,.38);
+        }
+        .pblock__shot--gallery {
+            position: relative;
+            padding: 0;
+            background: rgba(0,0,0,.28);
+            overflow: hidden;
+        }
+
+        /* Lightbox — ampliação ao clicar nas imagens do carrossel */
+        .img-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 2500;
+            display: grid;
+            grid-template: 1fr / 1fr;
+            place-items: center;
+            padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+            box-sizing: border-box;
+        }
+        .img-lightbox[hidden] {
+            display: none !important;
+        }
+        .img-lightbox__backdrop {
+            grid-area: 1 / 1;
+            align-self: stretch;
+            justify-self: stretch;
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 0;
+            margin: 0;
+            background: rgba(4, 5, 10, .88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: zoom-out;
+        }
+        .img-lightbox__stack {
+            grid-area: 1 / 1;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: min(96vw, 1680px);
+            max-height: min(92vh, 1200px);
+            margin: 0 auto;
+            padding-top: 2.75rem;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+        .img-lightbox__close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 2;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.14);
+            background: rgba(15,17,28,.92);
+            color: rgba(255,255,255,.9);
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s, border-color .2s;
+            pointer-events: auto;
+        }
+        .img-lightbox__close:hover {
+            background: rgba(108,99,255,.25);
+            border-color: rgba(108,99,255,.4);
+        }
+        .img-lightbox__figure {
+            margin: 0;
+            max-width: 100%;
+            max-height: min(88vh, 1100px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .img-lightbox__figure img {
+            max-width: 100%;
+            max-height: min(88vh, 1100px);
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 24px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.06);
+            display: block;
+            pointer-events: auto;
+        }
+
+        .pblock__chrome {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .55rem .75rem;
+            background: rgba(0,0,0,.35);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+        .pblock__dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.12);
+        }
+        .pblock__dot:nth-child(1) { background: rgba(255,95,87,.85); }
+        .pblock__dot:nth-child(2) { background: rgba(255,189,46,.9); }
+        .pblock__dot:nth-child(3) { background: rgba(52,199,89,.85); }
+        .pblock__url {
+            flex: 1;
+            margin-left: .35rem;
+            font-size: .62rem;
+            letter-spacing: .06em;
+            color: rgba(255,255,255,.35);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pblock__shot {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            background: rgba(0,0,0,.2);
+        }
+        .pblock--split .pblock__shot { min-height: 140px; }
+        .pblock__shot:not(.pblock__shot--gallery) img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+        }
+        .pblock__empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: .65rem;
+            padding: 1.5rem 1rem 1.75rem;
+            text-align: center;
+            min-height: 140px;
+        }
+        .pblock__empty-icon {
+            font-size: 2rem;
+            line-height: 1;
+            opacity: .85;
+        }
+        .pblock__empty-cap {
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.32);
+            max-width: 14rem;
+            line-height: 1.45;
+        }
+        .pblock__empty-path {
+            font-size: .62rem;
+            color: rgba(255,255,255,.22);
+            font-family: ui-monospace, monospace;
+            word-break: break-all;
+            padding: 0 .75rem;
+        }
+
+        .pblock__body {
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .pblock--split .pblock__body { padding: 0; }
+
+        .pblock__head {
+            display: flex;
+            align-items: flex-start;
+            gap: .85rem;
+            margin-bottom: .5rem;
+        }
 
         .picon {
-            width: 52px; height: 52px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.45rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,.07);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,.07) inset,
+                0 8px 24px -12px rgba(0,0,0,.45);
         }
-        .pi-p  { background: rgba(108,99,255,.14); }
-        .pi-cy { background: rgba(0,212,255,.11); }
-        .pi-gr { background: rgba(0,229,160,.11); }
-        .pi-or { background: rgba(255,159,67,.11); }
-        .pi-pk { background: rgba(255,101,132,.1); }
+        .pi-p  { background: linear-gradient(165deg, rgba(108,99,255,.22), rgba(108,99,255,.06)); }
+        .pi-cy { background: linear-gradient(165deg, rgba(0,212,255,.18), rgba(0,212,255,.05)); }
+        .pi-gr { background: linear-gradient(165deg, rgba(0,229,160,.17), rgba(0,229,160,.05)); }
+        .pi-or { background: linear-gradient(165deg, rgba(255,159,67,.18), rgba(255,159,67,.05)); }
+        .pi-wa { background: linear-gradient(165deg, rgba(37,211,102,.2), rgba(37,211,102,.06)); }
+        .pi-pk { background: linear-gradient(165deg, rgba(255,101,132,.17), rgba(255,101,132,.05)); }
 
-        .pcard-body { flex: 1; display: flex; flex-direction: column; }
-
+        .pblock__titles { min-width: 0; flex: 1; }
         .pname {
             font-family: 'Bricolage Grotesque', sans-serif;
-            font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: .3rem;
+            font-size: 1.26rem;
+            font-weight: 800;
+            letter-spacing: -.03em;
+            line-height: 1.2;
+            margin-bottom: .25rem;
         }
+        .pname a {
+            color: inherit;
+            text-decoration: none;
+            transition: opacity .2s;
+        }
+        .pname a:hover { opacity: .88; }
         .pname-row {
-            display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; margin-bottom: .3rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-bottom: .25rem;
         }
         .pname-row .pname { margin-bottom: 0; }
         .pdomain {
-            font-size: .7rem; font-weight: 600;
-            padding: .18rem .55rem; border-radius: 50px;
-            line-height: 1.3;
+            font-size: .65rem;
+            font-weight: 600;
+            letter-spacing: .04em;
+            padding: .2rem .58rem;
+            border-radius: 100px;
+            line-height: 1.35;
         }
-        .pcat { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .75rem; }
+        .pcat {
+            font-size: .66rem;
+            font-weight: 600;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            margin-bottom: .65rem;
+            opacity: .92;
+        }
         .pcat.cp  { color: var(--p); }
         .pcat.ccy { color: var(--cyan); }
         .pcat.cgr { color: var(--green); }
         .pcat.cor { color: var(--orange); }
+        .pcat.cwa { color: var(--wa); }
         .pcat.cpk { color: var(--pink); }
 
-        .pdesc { color: var(--muted); font-size: .92rem; line-height: 1.65; margin-bottom: 1.2rem; flex: 1; }
+        .pdesc {
+            color: #949ab8;
+            font-size: .88rem;
+            line-height: 1.72;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
 
-        .ptags { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: 1.4rem; }
+        .ptags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .38rem;
+            margin-bottom: 1.1rem;
+        }
         .ptag {
-            font-size: .72rem; font-weight: 600; padding: .25rem .65rem;
-            border-radius: 50px; border: 1px solid var(--border);
-            color: var(--muted);
+            font-size: .64rem;
+            font-weight: 500;
+            letter-spacing: .03em;
+            padding: .32rem .68rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,.065);
+            background: rgba(255,255,255,.035);
+            color: #9aa1c4;
+            transition: border-color .25s, background .25s;
+        }
+        .pblock:hover .ptag {
+            border-color: rgba(255,255,255,.1);
+            background: rgba(255,255,255,.045);
         }
 
         .plink {
-            display: inline-flex; align-items: center; gap: .4rem;
-            font-size: .85rem; font-weight: 700; text-decoration: none;
-            transition: gap .2s;
-            margin-top: auto; align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            font-size: .8rem;
+            font-weight: 600;
+            letter-spacing: .01em;
+            text-decoration: none;
+            margin-top: auto;
+            align-self: flex-start;
+            padding: .35rem 0;
+            border-bottom: 1px solid transparent;
+            transition: gap .35s cubic-bezier(.22, 1, .36, 1), border-color .3s;
         }
-        .plink.lp  { color: var(--p); }
-        .plink.lcy { color: var(--cyan); }
-        .plink.lgr { color: var(--green); }
-        .plink.lor { color: var(--orange); }
-        .plink.lpk { color: var(--pink); }
-        .plink:hover { gap: .7rem; }
+        .plink svg {
+            flex-shrink: 0;
+            opacity: .9;
+            transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+        }
+        .plink.lp  { color: #a39dff; }
+        .plink.lcy { color: #5ee7ff; }
+        .plink.lgr { color: #4df5c4; }
+        .plink.lor { color: #ffc48a; }
+        .plink.lwa { color: #5ce696; }
+        .plink.lpk { color: #ff8ba0; }
+        .plink:hover {
+            gap: .62rem;
+            border-bottom-color: currentColor;
+        }
+        .plink:hover svg { transform: translateX(3px); }
+
+        /* Acentos por produto */
+        .pblock--hue-p  { border-color: rgba(108,99,255,.14); }
+        .pblock--hue-p:hover  {
+            border-color: rgba(108,99,255,.32);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.38) inset,
+                0 1px 0 rgba(255,255,255,.05) inset,
+                0 40px 80px -40px rgba(0,0,0,.8),
+                0 0 80px -28px rgba(108,99,255,.2);
+        }
+        .pblock--hue-cy { border-color: rgba(0,212,255,.12); }
+        .pblock--hue-cy:hover {
+            border-color: rgba(0,212,255,.3);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.38) inset,
+                0 1px 0 rgba(255,255,255,.05) inset,
+                0 40px 80px -40px rgba(0,0,0,.8),
+                0 0 72px -30px rgba(0,212,255,.14);
+        }
+        .pblock--hue-gr { border-color: rgba(0,229,160,.11); }
+        .pblock--hue-gr:hover {
+            border-color: rgba(0,229,160,.28);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.38) inset,
+                0 1px 0 rgba(255,255,255,.05) inset,
+                0 40px 80px -40px rgba(0,0,0,.8),
+                0 0 72px -30px rgba(0,229,160,.12);
+        }
+        .pblock--hue-wa { border-color: rgba(37,211,102,.14); }
+        .pblock--hue-wa:hover {
+            border-color: rgba(37,211,102,.35);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.38) inset,
+                0 1px 0 rgba(255,255,255,.05) inset,
+                0 40px 80px -40px rgba(0,0,0,.8),
+                0 0 76px -28px rgba(37,211,102,.16);
+        }
+        .pblock--hue-pk { border-color: rgba(255,101,132,.13); }
+        .pblock--hue-pk:hover {
+            border-color: rgba(255,101,132,.32);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.38) inset,
+                0 1px 0 rgba(255,255,255,.05) inset,
+                0 40px 80px -40px rgba(0,0,0,.8),
+                0 0 76px -28px rgba(255,101,132,.14);
+        }
+
+        .pblock::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            z-index: 2;
+            opacity: .88;
+        }
+        .pblock--hue-p::before  { background: linear-gradient(90deg, transparent 2%, var(--p) 38%, var(--cyan) 72%, transparent 98%); }
+        .pblock--hue-cy::before { background: linear-gradient(90deg, transparent 2%, var(--cyan) 45%, #00c4b4 78%, transparent 98%); }
+        .pblock--hue-gr::before { background: linear-gradient(90deg, transparent 2%, var(--green) 42%, rgba(0,212,255,.75) 75%, transparent 98%); }
+        .pblock--hue-wa::before { background: linear-gradient(90deg, transparent 2%, var(--wa) 42%, var(--wa-teal) 76%, transparent 98%); }
+        .pblock--hue-pk::before { background: linear-gradient(90deg, transparent 2%, #ea1d2c 40%, var(--pink) 78%, transparent 98%); }
 
         /* ── WHY ── */
         #sobre { background: var(--bg2); }
@@ -614,8 +1155,16 @@
                 align-items: center;
                 box-sizing: border-box;
             }
-            .pgrid { grid-template-columns: 1fr 1fr; }
-            .pcard.span-full { flex-direction: column; }
+            .product-tiles { grid-template-columns: 1fr 1fr; }
+            .pblock--split,
+            .pblock--split-reverse {
+                grid-template-columns: 1fr;
+                padding: 1.5rem 1.35rem;
+            }
+            .pblock--split .pblock__visual,
+            .pblock--split-reverse .pblock__visual { order: -1; }
+            .pblock--split .pblock__body,
+            .pblock--split-reverse .pblock__body { order: 0; }
             .why-grid { grid-template-columns: 1fr; }
             .fgrid { grid-template-columns: 1fr 1fr; }
         }
@@ -623,7 +1172,7 @@
             .site-header { padding: 1rem max(5%, env(safe-area-inset-left, 0px)) 1rem max(5%, env(safe-area-inset-right, 0px)); }
             section { padding: 4rem 5%; }
             .hero { padding: 7rem 5% 4rem; }
-            .pgrid { grid-template-columns: 1fr; }
+            .product-tiles { grid-template-columns: 1fr; }
             .cta-box { padding: 2.5rem 1.5rem; }
             .fgrid { grid-template-columns: 1fr; gap: 2rem; }
             .hero-decor .orb { display: none; }
@@ -674,7 +1223,8 @@
 
     <p class="hero-sub">
         Desenvolvemos produtos digitais prontos para uso — do cardápio online ao app de entregas,
-        APIs e automação via WhatsApp. Tecnologia que trabalha enquanto você foca no seu negócio.
+        APIs e automação no WhatsApp com o <strong style="color:var(--text)">WCore</strong>
+        (parceria oficial com a Meta). Tecnologia que trabalha enquanto você foca no seu negócio.
     </p>
 
     <div class="hero-cta">
@@ -703,8 +1253,8 @@
             xBarcly
         </div>
         <div class="strip-item">
-            <span class="strip-dot" style="background:var(--orange)"></span>
-            WhatsApp API
+            <span class="strip-dot" style="background:var(--wa)"></span>
+            WCore
         </div>
         <div class="strip-item">
             <span class="strip-dot" style="background:var(--pink)"></span>
@@ -723,14 +1273,57 @@
         <p class="ssub">Cada produto foi construído para resolver problemas reais. Prontos para usar, fáceis de integrar.</p>
     </div>
 
-    <div class="pgrid">
+    @php
+        $productGallery = function (string $slug): array {
+            $urls = [];
+            $dir = public_path('storage/images/products/'.$slug);
+            if (is_dir($dir)) {
+                $ok = ['webp', 'jpg', 'jpeg', 'png'];
+                $names = [];
+                foreach (scandir($dir) ?: [] as $f) {
+                    if ($f === '.' || $f === '..') {
+                        continue;
+                    }
+                    $full = $dir.DIRECTORY_SEPARATOR.$f;
+                    if (! is_file($full)) {
+                        continue;
+                    }
+                    $e = strtolower((string) pathinfo($f, PATHINFO_EXTENSION));
+                    if (! in_array($e, $ok, true)) {
+                        continue;
+                    }
+                    $names[] = $f;
+                }
+                natcasesort($names);
+                foreach ($names as $f) {
+                    $urls[] = asset('storage/images/products/'.$slug.'/'.rawurlencode($f));
+                }
+            }
+            if (count($urls) === 0) {
+                foreach (['webp', 'jpg', 'jpeg', 'png'] as $ext) {
+                    $rel = 'storage/images/products/'.$slug.'.'.$ext;
+                    if (file_exists(public_path($rel))) {
+                        return [asset($rel)];
+                    }
+                }
+            }
 
-        <!-- Sistema de Delivery — destaque principal (largura total) -->
-        <a href="/delivery" class="pcard c-p span-full">
-            <div class="picon pi-p" style="margin-top:.2rem">&#x1F37D;&#xFE0F;</div>
-            <div class="pcard-body">
-                <div class="pname">Sistema de Delivery</div>
-                <div class="pcat cp">Restaurantes & Food Service</div>
+            return array_values($urls);
+        };
+    @endphp
+
+    <div class="product-showcase">
+
+        @php $deliveryUrls = $productGallery('delivery'); $deliveryCount = count($deliveryUrls); @endphp
+        <article class="pblock pblock--split pblock--hue-p">
+            <div class="pblock__body">
+                <div class="pblock__head">
+                    <div class="picon pi-p" aria-hidden="true">&#x1F37D;&#xFE0F;</div>
+                    <div class="pblock__titles">
+                        <div class="pname"><a href="/delivery">Sistema de Delivery</a></div>
+                        <div class="pcat cp">Restaurantes &amp; Food Service</div>
+                    </div>
+                </div>
                 <p class="pdesc">
                     Ecossistema completo para restaurantes: cardápio digital com pedidos online
                     (<strong style="color:var(--text)">Multi-Cardápios</strong>), gestor de pedidos em tempo real para a cozinha
@@ -743,25 +1336,75 @@
                     <span class="ptag">Gestor de Cozinha</span>
                     <span class="ptag">App do Garçom</span>
                     <span class="ptag">PWA</span>
-                    <span class="ptag">Pix & Marketplace</span>
+                    <span class="ptag">Pix &amp; Marketplace</span>
                     <span class="ptag">Sem mensalidade</span>
                 </div>
-                <span class="plink lp">
+                <a href="/delivery" class="plink lp">
                     Ver detalhes
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
             </div>
-        </a>
+            <div class="pblock__visual">
+                <div class="pblock__frame">
+                    <div class="pblock__chrome" aria-hidden="true">
+                        <span class="pblock__dot"></span><span class="pblock__dot"></span><span class="pblock__dot"></span>
+                        <span class="pblock__url">arcn.com.br / delivery</span>
+                    </div>
+                    <div class="pblock__shot pblock__shot--gallery">
+                        @if($deliveryCount > 0)
+                            <div class="pblock__slider js-product-slider" data-slide-count="{{ $deliveryCount }}">
+                                <div class="pblock__slider-viewport" style="--slides: {{ $deliveryCount }}; --index: 0;" role="region" aria-roledescription="Carrossel" aria-label="Imagens do Sistema de Delivery">
+                                    <div class="pblock__slider-track">
+                                        @foreach($deliveryUrls as $idx => $u)
+                                            <figure class="pblock__slider-slide">
+                                                <img src="{{ $u }}" alt="Sistema de Delivery — slide {{ $idx + 1 }}" loading="lazy" decoding="async" width="800" height="480">
+                                            </figure>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @if($deliveryCount > 1)
+                                    <div class="pblock__slider-nav">
+                                        <button type="button" class="pblock__slider-btn pblock__slider-btn--prev" data-slider-prev aria-label="Slide anterior">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                                        </button>
+                                        <button type="button" class="pblock__slider-btn pblock__slider-btn--next" data-slider-next aria-label="Próximo slide">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                                        </button>
+                                        <div class="pblock__slider-dots" role="tablist" aria-label="Selecionar slide">
+                                            @foreach($deliveryUrls as $idx => $u)
+                                                <button type="button" class="pblock__slider-dot{{ $idx === 0 ? ' is-active' : '' }}" data-slider-dot data-slide-index="{{ $idx }}" role="tab" aria-label="Slide {{ $idx + 1 }}" aria-current="{{ $idx === 0 ? 'true' : 'false' }}"></button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="pblock__empty">
+                                <span class="pblock__empty-icon" aria-hidden="true">&#x1F4F8;</span>
+                                <span class="pblock__empty-cap">Galeria de imagens</span>
+                                <span class="pblock__empty-path">storage/images/products/delivery/</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </article>
 
-        <!-- Fluxy -->
-        <a href="https://fluxy.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-cy">
-            <div class="picon pi-cy">&#x1F6F5;</div>
-            <div class="pcard-body">
+        <div class="product-tiles">
+            <a href="https://fluxy.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pblock pblock--compact pblock--hue-cy">
+                <div class="pblock__body">
+                    <div class="pblock__head">
+                        <div class="picon pi-cy" style="padding:.4rem">
+                            <img src="{{ asset('storage/images/fluxy/logo.png') }}" alt="Fluxy" width="36" height="36" style="width:36px;height:36px;object-fit:contain;display:block" decoding="async">
+                        </div>
+                        <div class="pblock__titles">
                 <div class="pname-row">
-                    <div class="pname">Fluxy</div>
+                                <span class="pname">Fluxy</span>
                     <span class="pdomain" style="color:var(--cyan);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2)">fluxy.arcn.com.br</span>
                 </div>
                 <div class="pcat ccy">App de Entregas</div>
+                        </div>
+                    </div>
                 <p class="pdesc">
                     Conecta empresas a entregadores de confiança. Solicite entregas, rastreie em tempo real e gerencie toda a logística.
                 </p>
@@ -773,46 +1416,54 @@
                 </div>
                 <span class="plink lcy">
                     Acessar
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
 
-        <!-- xBarcly -->
-        <a href="https://xbarcly.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-gr">
-            <div class="picon pi-gr">&#x1F4F7;</div>
-            <div class="pcard-body">
+            <a href="https://xbarcly.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pblock pblock--compact pblock--hue-gr">
+                <div class="pblock__body">
+                    <div class="pblock__head">
+                        <div class="picon pi-gr" style="padding:.4rem">
+                            <img src="{{ asset('storage/images/xbarcly/logo.png') }}" alt="xBarcly" width="36" height="36" style="width:36px;height:36px;object-fit:contain;display:block" decoding="async">
+                        </div>
+                        <div class="pblock__titles">
                 <div class="pname-row">
-                    <div class="pname">xBarcly</div>
+                                <span class="pname">xBarcly</span>
                     <span class="pdomain" style="color:var(--green);background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2)">xbarcly.arcn.com.br</span>
                 </div>
                 <div class="pcat cgr">API de Código de Barras</div>
+                        </div>
+                    </div>
                 <p class="pdesc">
                     Consulta EAN para qualquer sistema. Informações completas de produtos pelo código de barras — ideal para PDVs, estoque e e-commerce.
                 </p>
                 <div class="ptags">
-                    <span class="ptag">EAN-13 & EAN-8</span>
+                        <span class="ptag">EAN-13 &amp; EAN-8</span>
                     <span class="ptag">REST API</span>
                     <span class="ptag">Fácil integração</span>
                 </div>
                 <span class="plink lgr">
                     Acessar
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
 
-        <!-- iHub -->
-        <a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pcard c-pk">
-            <div class="picon pi-pk" style="padding:.45rem">
-                <img src="{{ asset('storage/images/ihub/logo.png') }}" alt="iHub" width="40" height="40" style="width:40px;height:40px;object-fit:contain;display:block" decoding="async">
+            <a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer" class="pblock pblock--compact pblock--hue-pk">
+                <div class="pblock__body">
+                    <div class="pblock__head">
+                        <div class="picon pi-pk" style="padding:.4rem">
+                            <img src="{{ asset('storage/images/ihub/logo.png') }}" alt="" width="36" height="36" style="width:36px;height:36px;object-fit:contain;display:block" decoding="async">
             </div>
-            <div class="pcard-body">
+                        <div class="pblock__titles">
                 <div class="pname-row">
-                    <div class="pname">iHub</div>
+                                <span class="pname">iHub</span>
                     <span class="pdomain" style="color:var(--pink);background:rgba(255,101,132,.08);border:1px solid rgba(255,101,132,.22)">ihub.arcn.com.br</span>
                 </div>
                 <div class="pcat cpk">Integração iFood</div>
+                        </div>
+                    </div>
                 <p class="pdesc">
                     Conecte seu sistema ao iFood sem desenvolver a API. Pedidos e eventos via webhook, homologado pelo iFood, com retry automático.
                 </p>
@@ -824,33 +1475,87 @@
                 </div>
                 <span class="plink lpk">
                     Conhecer
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
+        </div>
 
-        <!-- WhatsApp API — em breve (largura total) -->
-        <div class="pcard c-or span-full">
-            <div class="picon pi-or" style="margin-top:.2rem">&#x1F4AC;</div>
-            <div class="pcard-body">
-                <div class="pname">WhatsApp API</div>
-                <div class="pcat cor">Automação & Atendimento</div>
+        @php $wcoreUrls = $productGallery('wcore'); $wcoreCount = count($wcoreUrls); @endphp
+        <article class="pblock pblock--split pblock--split-reverse pblock--hue-wa">
+            <div class="pblock__body">
+                <div class="pblock__head">
+                    <div class="picon pi-wa" style="padding:.4rem">
+                        <img src="{{ asset('storage/images/wcore/logo.png') }}" alt="" width="36" height="36" style="width:36px;height:36px;object-fit:contain;display:block" decoding="async">
+                    </div>
+                    <div class="pblock__titles">
+                        <div class="pname-row">
+                            <span class="pname"><a href="https://wcore.cloud" target="_blank" rel="noopener noreferrer">WCore</a></span>
+                            <span class="pdomain" style="color:var(--wa);background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.28)">wcore.cloud</span>
+                        </div>
+                        <div class="pcat cwa">WhatsApp Business API</div>
+                    </div>
+                </div>
                 <p class="pdesc">
-                    Automação completa via WhatsApp: saudações automáticas, chatbot inteligente, chat com IA integrada e multi-atendimento. Atenda mais clientes com menos esforço.
+                    Automação e atendimento na WhatsApp Business API: mensagens, chatbot, IA e multi-atendimento.
+                    <strong style="color:var(--text)">Parceria oficial com a Meta</strong> — infraestrutura alinhada ao ecossistema WhatsApp para empresas que precisam escalar com segurança.
                 </p>
                 <div class="ptags">
-                    <span class="ptag">Mensagens automáticas</span>
-                    <span class="ptag">Chatbot</span>
-                    <span class="ptag">Chat com IA</span>
+                    <span class="ptag">Parceiro oficial Meta</span>
+                    <span class="ptag">Cloud API</span>
+                    <span class="ptag">Chatbot &amp; IA</span>
                     <span class="ptag">Multi-atendimento</span>
-                    <span class="ptag">Em breve</span>
                 </div>
-                <span class="plink lor">
-                    Entrar na lista de espera
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </span>
+                <a href="https://wcore.cloud" target="_blank" rel="noopener noreferrer" class="plink lwa">
+                    Acessar
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
             </div>
+            <div class="pblock__visual">
+                <div class="pblock__frame">
+                    <div class="pblock__chrome" aria-hidden="true">
+                        <span class="pblock__dot"></span><span class="pblock__dot"></span><span class="pblock__dot"></span>
+                        <span class="pblock__url">wcore.cloud</span>
         </div>
+                    <div class="pblock__shot pblock__shot--gallery">
+                        @if($wcoreCount > 0)
+                            <div class="pblock__slider js-product-slider" data-slide-count="{{ $wcoreCount }}">
+                                <div class="pblock__slider-viewport" style="--slides: {{ $wcoreCount }}; --index: 0;" role="region" aria-roledescription="Carrossel" aria-label="Imagens do WCore">
+                                    <div class="pblock__slider-track">
+                                        @foreach($wcoreUrls as $idx => $u)
+                                            <figure class="pblock__slider-slide">
+                                                <img src="{{ $u }}" alt="WCore — slide {{ $idx + 1 }}" loading="lazy" decoding="async" width="800" height="480">
+                                            </figure>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @if($wcoreCount > 1)
+                                    <div class="pblock__slider-nav">
+                                        <button type="button" class="pblock__slider-btn pblock__slider-btn--prev" data-slider-prev aria-label="Slide anterior">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                                        </button>
+                                        <button type="button" class="pblock__slider-btn pblock__slider-btn--next" data-slider-next aria-label="Próximo slide">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                                        </button>
+                                        <div class="pblock__slider-dots" role="tablist" aria-label="Selecionar slide">
+                                            @foreach($wcoreUrls as $idx => $u)
+                                                <button type="button" class="pblock__slider-dot{{ $idx === 0 ? ' is-active' : '' }}" data-slider-dot data-slide-index="{{ $idx }}" role="tab" aria-label="Slide {{ $idx + 1 }}" aria-current="{{ $idx === 0 ? 'true' : 'false' }}"></button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="pblock__empty">
+                                <img src="{{ asset('storage/images/wcore/logo.png') }}" alt="" width="48" height="48" style="width:48px;height:48px;object-fit:contain;opacity:.95" decoding="async">
+                                <span class="pblock__empty-cap">Galeria de imagens</span>
+                                <span class="pblock__empty-path">storage/images/products/wcore/</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </article>
 
     </div>
 </section>
@@ -957,7 +1662,7 @@
                 <li><a href="https://fluxy.arcn.com.br" target="_blank">Fluxy</a></li>
                 <li><a href="https://xbarcly.arcn.com.br" target="_blank">xBarcly</a></li>
                 <li><a href="https://ihub.arcn.com.br" target="_blank" rel="noopener noreferrer">iHub</a></li>
-                <li><a href="#produtos">WhatsApp API</a></li>
+                <li><a href="https://wcore.cloud" target="_blank" rel="noopener noreferrer">WCore</a></li>
             </ul>
         </div>
         <div class="fcol">
@@ -995,6 +1700,16 @@
 
 </div><!-- /.page-wrap -->
 
+<div id="img-lightbox" class="img-lightbox" hidden role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+    <button type="button" class="img-lightbox__backdrop" aria-label="Fechar visualização ampliada"></button>
+    <div class="img-lightbox__stack">
+        <button type="button" class="img-lightbox__close" aria-label="Fechar">&times;</button>
+        <figure class="img-lightbox__figure">
+            <img id="img-lightbox-img" src="" alt="" decoding="async">
+        </figure>
+    </div>
+</div>
+
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 <script>
 (function () {
@@ -1018,6 +1733,159 @@
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') setOpen(false);
     });
+})();
+
+(function () {
+    var AUTOPLAY_MS = 5500;
+    var prefersReducedMotion = window.matchMedia
+        ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        : false;
+    document.querySelectorAll('.js-product-slider').forEach(function (root) {
+        var vp = root.querySelector('.pblock__slider-viewport');
+        var prev = root.querySelector('[data-slider-prev]');
+        var next = root.querySelector('[data-slider-next]');
+        var dots = root.querySelectorAll('[data-slider-dot]');
+        if (!vp) return;
+        var slides = parseInt(root.getAttribute('data-slide-count'), 10) || 1;
+        var index = 0;
+        var timer = null;
+
+        function apply() {
+            vp.style.setProperty('--index', String(index));
+            if (prev) prev.disabled = slides <= 1;
+            if (next) next.disabled = slides <= 1;
+            dots.forEach(function (d, i) {
+                var on = i === index;
+                d.classList.toggle('is-active', on);
+                d.setAttribute('aria-current', on ? 'true' : 'false');
+            });
+        }
+
+        function goNext() {
+            index = (index + 1) % slides;
+            apply();
+        }
+
+        function goPrev() {
+            index = (index - 1 + slides) % slides;
+            apply();
+        }
+
+        function stopAutoplay() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            if (slides < 2 || prefersReducedMotion) return;
+            timer = setInterval(goNext, AUTOPLAY_MS);
+        }
+
+        function restartAutoplay() {
+            stopAutoplay();
+            startAutoplay();
+        }
+
+        apply();
+        startAutoplay();
+
+        if (prev) {
+            prev.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                goPrev();
+                restartAutoplay();
+            });
+        }
+        if (next) {
+            next.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                goNext();
+                restartAutoplay();
+            });
+        }
+        dots.forEach(function (d) {
+            d.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var j = parseInt(d.getAttribute('data-slide-index'), 10);
+                if (!isNaN(j)) {
+                    index = j;
+                    apply();
+                    restartAutoplay();
+                }
+            });
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) stopAutoplay();
+            else startAutoplay();
+        });
+
+        root.addEventListener('mouseenter', stopAutoplay);
+        root.addEventListener('mouseleave', startAutoplay);
+    });
+})();
+
+(function () {
+    var lb = document.getElementById('img-lightbox');
+    var lbImg = document.getElementById('img-lightbox-img');
+    if (!lb || !lbImg) return;
+    var backdrop = lb.querySelector('.img-lightbox__backdrop');
+    var btnClose = lb.querySelector('.img-lightbox__close');
+
+    function openLightbox(src, alt) {
+        if (!src) return;
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.hidden = false;
+        /* Só trava overflow — sem position:fixed + scrollTo (evita scroll “infinito” / animação com scroll-behavior: smooth) */
+        document.documentElement.style.setProperty('overflow', 'hidden');
+        document.body.style.setProperty('overflow', 'hidden');
+        if (btnClose) {
+            try {
+                btnClose.focus({ preventScroll: true });
+            } catch (err) {
+                btnClose.focus();
+            }
+        }
+    }
+
+    function closeLightbox() {
+        if (lb.hidden) return;
+        if (document.activeElement && lb.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+        lb.hidden = true;
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
+        document.documentElement.style.removeProperty('overflow');
+        document.body.style.removeProperty('overflow');
+    }
+
+    document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t || t.tagName !== 'IMG') return;
+        if (!t.closest || !t.closest('.js-product-slider')) return;
+        if (!t.closest('.pblock__slider-slide')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        openLightbox(t.getAttribute('src') || t.src, t.getAttribute('alt') || '');
+    }, true);
+
+    if (backdrop) backdrop.addEventListener('click', closeLightbox);
+    if (btnClose) btnClose.addEventListener('click', closeLightbox);
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape' || lb.hidden) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        closeLightbox();
+    }, true);
 })();
 </script>
 </body>
