@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Status dos serviços — Arcn Solutions</title>
-    <meta name="description" content="Status dos sistemas Arcn: medição HTTP no máximo a cada 20 segundos entre visitas; entre medições usa o último resultado gravado.">
+    <x-seo
+        title="Status dos serviços — Arcn Solutions"
+        description="Status dos sistemas Arcn: medição HTTP no máximo a cada 20 segundos entre visitas; entre medições usa o último resultado gravado."
+        path="/status"
+        keywords="status dos serviços, disponibilidade, Arcn Solutions"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">

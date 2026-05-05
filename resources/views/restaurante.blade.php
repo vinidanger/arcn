@@ -3,8 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Arcn Solutions — Soluções Digitais para Restaurantes</title>
-    <meta name="description" content="Cardápio digital, gestor de pedidos e app do garçom para impulsionar seu restaurante. Sem mensalidade.">
+    <x-seo
+        title="Arcn Solutions — Soluções Digitais para Restaurantes"
+        description="Cardápio digital, gestor de pedidos e app do garçom para impulsionar seu restaurante. Sem mensalidade."
+        path="/delivery"
+        image="/images/og-delivery.png"
+        keywords="cardápio digital, gestão de restaurante, pedidos delivery, app garçom, Arcn Solutions"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
