@@ -24,7 +24,7 @@ Artisan::command('branding:generate', function () {
 
         return 1;
     }
-    $this->info('Assets gerados em public/images a partir de storage/app/public/images/logo.png.');
+    $this->info('Assets em public/images (favicon 48×48 em /favicon.ico via rota). Fonte: storage/app/public/images/logo.png.');
 
     return 0;
 })->purpose('Gera favicons, ícones touch/PWA e imagens Open Graph a partir do logo em storage.');

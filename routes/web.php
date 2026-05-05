@@ -2,6 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
+/*
+ * PNG servido na URL /favicon.ico com Content-Type image/png: evita tela branca quando o servidor
+ * associa .ico a image/x-icon e o corpo é PNG (ICO com PNG embutido mal interpretado).
+ */
+Route::get('/favicon.ico', function () {
+    $path = public_path('images/favicon-48x48.png');
+
+    return is_readable($path)
+        ? response()->file($path, [
+            'Content-Type' => 'image/png',
+            'Cache-Control' => 'public, max-age=604800',
+            'X-Content-Type-Options' => 'nosniff',
+        ])
+        : abort(404);
+});
+
 Route::get('/robots.txt', function () {
     $lines = [
         'User-agent: *',
