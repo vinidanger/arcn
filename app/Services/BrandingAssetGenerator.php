@@ -54,6 +54,24 @@ class BrandingAssetGenerator
 
         $written[] = $this->savePng($this->resizeTransparent(16, 16), 'favicon-16x16.png');
         $written[] = $this->savePng($this->resizeTransparent(32, 32), 'favicon-32x32.png');
+
+        // Google Search exige ícone ≥48×48 e prioriza /favicon.ico na raiz (documentação Search Central).
+        $icon48 = $this->squareOnBrandBackground(48);
+        $png48 = $this->pngBinary($icon48);
+        imagedestroy($icon48);
+        $png48Path = $this->outputDir.DIRECTORY_SEPARATOR.'favicon-48x48.png';
+        if (file_put_contents($png48Path, $png48) === false) {
+            throw new InvalidArgumentException('Falha ao gravar: '.$png48Path);
+        }
+        $written[] = 'images/favicon-48x48.png';
+
+        $icoPath = dirname($this->outputDir).DIRECTORY_SEPARATOR.'favicon.ico';
+        $icoPayload = $this->wrapSinglePngAsIco($png48, 48, 48);
+        if (file_put_contents($icoPath, $icoPayload) === false) {
+            throw new InvalidArgumentException('Falha ao gravar: '.$icoPath);
+        }
+        $written[] = 'favicon.ico';
+
         $written[] = $this->savePng($this->squareOnBrandBackground(180), 'apple-touch-icon.png');
         $written[] = $this->savePng($this->squareOnBrandBackground(192), 'android-chrome-192x192.png');
         $written[] = $this->savePng($this->squareOnBrandBackground(512), 'android-chrome-512x512.png');
@@ -175,6 +193,41 @@ class BrandingAssetGenerator
     {
         imagealphablending($img, false);
         imagesavealpha($img, true);
+    }
+
+    /** PNG compactado em string (para embutir em .ico). */
+    private function pngBinary(GdImage $img): string
+    {
+        imagesavealpha($img, true);
+        ob_start();
+        imagepng($img, null, 6);
+        $bin = ob_get_clean();
+        if ($bin === false || $bin === '') {
+            throw new InvalidArgumentException('Falha ao codificar PNG.');
+        }
+
+        return $bin;
+    }
+
+    /**
+     * Um único frame ICO contendo PNG (suportado desde Windows Vista — compatível com crawlers modernos).
+     */
+    private function wrapSinglePngAsIco(string $pngBinary, int $width, int $height): string
+    {
+        $len = strlen($pngBinary);
+        $offset = 22;
+        $wByte = $width >= 256 ? 0 : $width;
+        $hByte = $height >= 256 ? 0 : $height;
+
+        $header = pack('vvv', 0, 1, 1);
+        $entry = pack('CC', $wByte, $hByte)
+            .pack('CC', 0, 0)
+            .pack('v', 1)
+            .pack('v', 0)
+            .pack('V', $len)
+            .pack('V', $offset);
+
+        return $header.$entry.$pngBinary;
     }
 
     private function savePng(GdImage $img, string $filename): string

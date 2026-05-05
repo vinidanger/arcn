@@ -59,6 +59,9 @@
 <meta name="theme-color" content="#07080d">
 <link rel="canonical" href="{{ $canonicalUrl }}">
 
+<link rel="icon" href="{{ asset('favicon.ico') }}" sizes="48x48">
+<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/favicon-48x48.png') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
