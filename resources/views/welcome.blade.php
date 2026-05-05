@@ -226,8 +226,14 @@
             position: relative; z-index: 1; margin-bottom: 1.4rem;
         }
         .g {
-            background: linear-gradient(135deg, var(--p) 0%, var(--cyan) 55%, #b388ff 100%);
+            background: linear-gradient(90deg, var(--p) 0%, var(--cyan) 33%, #b388ff 66%, var(--p) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            background-size: 200% auto;
+            animation: grad-shift 4s linear infinite;
+        }
+        @keyframes grad-shift {
+            from { background-position: 0% center; }
+            to   { background-position: 200% center; }
         }
 
         .hero-sub {
@@ -259,17 +265,23 @@
         }
         .btn-ghost:hover { border-color: rgba(255,255,255,.28); background: rgba(255,255,255,.04); }
 
-        /* Products mini-preview strip */
+        /* Products mini-preview strip — align-self evita largura intrínseca (todos os pills em fila)
+           com align-items:center no .hero, que no mobile estourava a viewport e era cortado pelo overflow-x do body */
         .product-strip {
             display: flex; gap: 1rem; justify-content: center; flex-wrap: nowrap;
             position: relative; z-index: 1;
             width: 100%;
             max-width: 100%;
+            min-width: 0;
+            align-self: stretch;
             box-sizing: border-box;
-            padding: 0 0.25rem;
+            padding: 0 max(0.25rem, env(safe-area-inset-left, 0px)) 0 max(0.25rem, env(safe-area-inset-right, 0px));
             overflow-x: auto;
+            overflow-y: visible;
             -webkit-overflow-scrolling: touch;
             scrollbar-gutter: stable;
+            overscroll-behavior-x: contain;
+            touch-action: pan-x;
         }
         .strip-item {
             display: flex; align-items: center; gap: .55rem;
@@ -315,8 +327,31 @@
 
         .divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            background: transparent;
             margin: 0 6%;
+            position: relative;
+            overflow: visible;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(108,99,255,.2) 38%, rgba(0,212,255,.2) 62%, transparent);
+        }
+        .divider::after {
+            content: '';
+            position: absolute;
+            left: 50%; top: -4px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            background: var(--p);
+            box-shadow: 0 0 10px 2px rgba(108,99,255,.65);
+            animation: node-pulse 3.5s ease-in-out infinite;
+        }
+        @keyframes node-pulse {
+            0%,100% { box-shadow: 0 0 8px 2px rgba(108,99,255,.6); }
+            50%     { box-shadow: 0 0 18px 5px rgba(0,212,255,.75); }
         }
 
         /* ── PRODUTOS — showcase (split + tiles + área de imagem) ── */
@@ -946,7 +981,13 @@
         .pblock--hue-pk::before { background: linear-gradient(90deg, transparent 2%, #ea1d2c 40%, var(--pink) 78%, transparent 98%); }
 
         /* ── WHY ── */
-        #sobre { background: var(--bg2); }
+        #sobre {
+            background: var(--bg2);
+            background-image:
+                linear-gradient(rgba(108,99,255,.038) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,.038) 1px, transparent 1px);
+            background-size: 42px 42px;
+        }
         .why-grid {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1176,14 +1217,253 @@
             .site-header { padding: 1rem max(5%, env(safe-area-inset-left, 0px)) 1rem max(5%, env(safe-area-inset-right, 0px)); }
             section { padding: 4rem 5%; }
             .hero { padding: 7rem 5% 4rem; }
+            .product-strip {
+                justify-content: flex-start;
+                gap: 0.75rem;
+                scroll-snap-type: x proximity;
+            }
+            .product-strip .strip-item {
+                scroll-snap-align: start;
+            }
             .product-tiles { grid-template-columns: 1fr; }
             .cta-box { padding: 2.5rem 1.5rem; }
             .fgrid { grid-template-columns: 1fr; gap: 2rem; }
             .hero-decor .orb { display: none; }
         }
+
+        /* ── HERO DOT GRID ── */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: radial-gradient(rgba(108,99,255,.15) 1.5px, transparent 1.5px);
+            background-size: 28px 28px;
+            -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 10%, transparent 75%);
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 10%, transparent 75%);
+            animation: grid-breathe 7s ease-in-out infinite alternate;
+        }
+        @keyframes grid-breathe { from { opacity: .35; } to { opacity: .7; } }
+
+        /* ── HERO SCAN LINE ── */
+        .hero-scan {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .hero-scan::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(108,99,255,.55) 30%, rgba(0,212,255,.55) 70%, transparent 100%);
+            animation: scan-down 10s ease-in-out infinite 1.5s;
+            top: -2px;
+            opacity: 0;
+        }
+        @keyframes scan-down {
+            0%   { top: 0%; opacity: 0; }
+            4%   { opacity: 1; }
+            94%  { opacity: .55; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* ── HERO ENTRANCE ── */
+        .badge    { animation: fade-up .75s .05s both; }
+        .hero h1  { animation: fade-up .82s .20s both; }
+        .hero-sub { animation: fade-up .82s .35s both; }
+        .hero-cta { animation: fade-up .82s .50s both; }
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ── STRIP ITEM STAGGER ── */
+        .strip-item { opacity: 0; animation: strip-in .55s both; }
+        .strip-item:nth-child(1) { animation-delay: .68s; }
+        .strip-item:nth-child(2) { animation-delay: .77s; }
+        .strip-item:nth-child(3) { animation-delay: .86s; }
+        .strip-item:nth-child(4) { animation-delay: .95s; }
+        .strip-item:nth-child(5) { animation-delay: 1.04s; }
+        @keyframes strip-in {
+            from { opacity: 0; transform: translateY(10px) scale(.96); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ── SCROLL REVEAL ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .72s cubic-bezier(.22,1,.36,1), transform .72s cubic-bezier(.22,1,.36,1);
+        }
+        .reveal.is-visible { opacity: 1; transform: none; }
+
+        /* ── CURSOR SPOTLIGHT ── */
+        .cursor-spot {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            width: 700px; height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(108,99,255,.06) 0%, transparent 65%);
+            transform: translate(-50%, -50%);
+            top: -999px; left: -999px;
+            will-change: left, top;
+            transition: top .16s ease-out, left .16s ease-out;
+        }
+
+        /* ── NCARD HOVER ── */
+        .ncard {
+            transition: border-color .3s, box-shadow .3s, transform .35s cubic-bezier(.22,1,.36,1);
+        }
+        .ncard:hover {
+            border-color: rgba(108,99,255,.3);
+            box-shadow: 0 0 40px -10px rgba(108,99,255,.24);
+            transform: translateY(-3px);
+        }
+
+        /* ── WI ICON GLOW ── */
+        .wicon {
+            transition: background .3s, border-color .3s, box-shadow .3s, transform .35s;
+        }
+        .wi:hover .wicon {
+            background: rgba(108,99,255,.22);
+            border-color: rgba(108,99,255,.42);
+            box-shadow: 0 0 22px -5px rgba(108,99,255,.38);
+            transform: scale(1.12) rotate(-5deg);
+        }
+
+        /* ── CTA GLOW PULSE ── */
+        .cta-box { animation: cta-pulse 5s ease-in-out infinite; }
+        @keyframes cta-pulse {
+            0%,100% { box-shadow: 0 0 80px -24px rgba(108,99,255,.22); }
+            50%     { box-shadow: 0 0 100px -16px rgba(0,212,255,.28); }
+        }
+
+        /* ── SLABEL ACCENT ── */
+        .slabel::before {
+            content: '';
+            display: inline-block;
+            width: 14px; height: 2px;
+            background: var(--p);
+            border-radius: 1px;
+            box-shadow: 0 0 8px var(--p);
+            vertical-align: middle;
+            margin-right: .42rem;
+        }
+
+        /* ── NAV GLASS ON SCROLL ── */
+        .site-header.is-scrolled {
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            background: rgba(7,8,13,.78);
+        }
+
+        /* ── CANVAS PARTICLE NETWORK ── */
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── PERSPECTIVE GRID FLOOR (Tron) ── */
+        .hero-persp {
+            position: absolute;
+            bottom: 0;
+            left: -15%;
+            right: -15%;
+            height: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(108,99,255,.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,.12) 1px, transparent 1px);
+            background-size: 54px 54px;
+            transform: perspective(280px) rotateX(72deg);
+            transform-origin: bottom center;
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.5) 0%, transparent 68%);
+            mask-image: linear-gradient(to top, rgba(0,0,0,.5) 0%, transparent 68%);
+        }
+
+        /* ── HERO HUD ── */
+        .hero-hud {
+            position: absolute;
+            bottom: 2.2rem;
+            right: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: .22rem;
+            align-items: flex-end;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .hud-line {
+            font-family: ui-monospace, 'Cascadia Code', 'Courier New', monospace;
+            font-size: .58rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: rgba(108,99,255,.32);
+            display: block;
+        }
+        .hud-line:first-child {
+            color: rgba(0,229,160,.42);
+        }
+        .hud-line:last-child::after {
+            content: '_';
+            animation: blink .9s step-end infinite;
+        }
+        @media (max-width: 700px) { .hero-hud { display: none; } }
+
+        /* ── CORNER BRACKETS ── */
+        .tc {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            width: 16px;
+            height: 16px;
+            opacity: .22;
+            transition: opacity .4s ease, filter .4s ease;
+        }
+        .pblock:hover .tc,
+        .ncard:hover .tc {
+            opacity: 1;
+            filter: drop-shadow(0 0 6px rgba(108,99,255,.8));
+        }
+        .tc-tl { top: 0; left: 0;   border-top: 1.5px solid rgba(108,99,255,.95); border-left: 1.5px solid rgba(108,99,255,.95); }
+        .tc-tr { top: 0; right: 0;  border-top: 1.5px solid rgba(108,99,255,.95); border-right: 1.5px solid rgba(108,99,255,.95); }
+        .tc-bl { bottom: 0; left: 0;  border-bottom: 1.5px solid rgba(108,99,255,.95); border-left: 1.5px solid rgba(108,99,255,.95); }
+        .tc-br { bottom: 0; right: 0; border-bottom: 1.5px solid rgba(108,99,255,.95); border-right: 1.5px solid rgba(108,99,255,.95); }
+
+        /* ── BTN PRIMARY SHIMMER ── */
+        .btn-primary {
+            background: linear-gradient(90deg, var(--p) 0%, var(--cyan) 50%, var(--p) 100%);
+            background-size: 200% auto;
+            animation: btn-shimmer 3s linear infinite;
+        }
+        @keyframes btn-shimmer {
+            from { background-position: 0% center; }
+            to   { background-position: 200% center; }
+        }
+
+        /* ── REDUCED MOTION ── */
+        @media (prefers-reduced-motion: reduce) {
+            .badge, .hero h1, .hero-sub, .hero-cta,
+            .strip-item, .hero-scan::after, .cta-box, .g, .btn-primary {
+                animation: none !important;
+            }
+            #hero-canvas { display: none; }
+            .strip-item { opacity: 1 !important; }
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+        }
     </style>
 </head>
 <body>
+<div class="cursor-spot" id="cursor-spot" aria-hidden="true"></div>
 
 <header class="site-header" id="site-nav">
     <div class="site-header-bar">
@@ -1210,25 +1490,31 @@
 <!-- HERO -->
 <section class="hero">
     <div class="hero-decor" aria-hidden="true">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-scan"></div>
+        <div class="hero-persp"></div>
         <div class="orb o1"></div>
         <div class="orb o2"></div>
         <div class="orb o3"></div>
     </div>
+    <div class="hero-hud" aria-hidden="true">
+        <span class="hud-line">&#9632; SYS: ONLINE</span>
+        <span class="hud-line">v2.5.0</span>
+    </div>
 
     <div class="badge">
         <span class="bdot"></span>
-        Soluções de software para negócios
+        Soluções digitais para negócios
     </div>
 
     <h1>
-        Software moderno para<br>
+        Sistema moderno para<br>
         <span class="g">negócios que crescem</span>
     </h1>
 
     <p class="hero-sub">
         Desenvolvemos produtos digitais prontos para uso — do cardápio online ao app de entregas,
-        APIs e automação no WhatsApp com o <strong style="color:var(--text)">WCore</strong>
-        (parceria oficial com a Meta). Tecnologia que trabalha enquanto você foca no seu negócio.
+        APIs e automação no WhatsApp com o <strong style="color:var(--text)">WCore</strong>. Tecnologia que trabalha enquanto você foca no seu negócio.
     </p>
 
     <div class="hero-cta">
@@ -1890,6 +2176,241 @@
         e.stopImmediatePropagation();
         closeLightbox();
     }, true);
+})();
+</script>
+
+<script>
+/* ── Cursor spotlight ── */
+(function () {
+    var spot = document.getElementById('cursor-spot');
+    if (!spot || window.matchMedia('(hover: none)').matches) return;
+    var raf = null;
+    var cx = -999, cy = -999;
+    document.addEventListener('mousemove', function (e) {
+        cx = e.clientX; cy = e.clientY;
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+            spot.style.left = cx + 'px';
+            spot.style.top  = cy + 'px';
+            raf = null;
+        });
+    }, { passive: true });
+})();
+
+/* ── Nav glass on scroll ── */
+(function () {
+    var header = document.getElementById('site-nav');
+    if (!header) return;
+    var ticking = false;
+    function update() {
+        header.classList.toggle('is-scrolled', window.scrollY > 20);
+        ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+        if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }, { passive: true });
+    update();
+})();
+
+/* ── Scroll reveal ── */
+(function () {
+    if (!window.IntersectionObserver) return;
+    var query = [
+        '#produtos .center .slabel',
+        '#produtos .center .stitle',
+        '#produtos .center .ssub',
+        '.pblock--split .pblock__body',
+        '.pblock--split .pblock__visual',
+        '.pblock--compact',
+        '#sobre .slabel',
+        '#sobre .stitle',
+        '#sobre .ssub',
+        '.wi',
+        '.ncard',
+        '.cta-title',
+        '.cta-sub',
+        '.cta-btns',
+    ].join(',');
+
+    var els = document.querySelectorAll(query);
+    if (!els.length) return;
+
+    ['.product-tiles', '.why-items', '.nums-grid'].forEach(function (sel) {
+        var parent = document.querySelector(sel);
+        if (!parent) return;
+        parent.querySelectorAll('.pblock, .wi, .ncard').forEach(function (child, i) {
+            child.dataset.rd = (i * 0.1).toFixed(2);
+        });
+    });
+
+    els.forEach(function (el) { el.classList.add('reveal'); });
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var delay = parseFloat(el.dataset.rd || 0);
+            el.style.transitionDelay = delay + 's';
+            el.classList.add('is-visible');
+            observer.unobserve(el);
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+    els.forEach(function (el) { observer.observe(el); });
+})();
+
+/* ── Animated counters ── */
+(function () {
+    if (!window.IntersectionObserver) return;
+    var grid = document.querySelector('.nums-grid');
+    if (!grid) return;
+    var done = false;
+
+    var observer = new IntersectionObserver(function (entries) {
+        if (done || !entries[0].isIntersecting) return;
+        done = true;
+        observer.disconnect();
+
+        grid.querySelectorAll('.nval').forEach(function (el) {
+            var text = el.textContent.trim();
+            var num = parseInt(text, 10);
+            if (isNaN(num) || text !== String(num)) return;
+            var start = null;
+            var duration = 1300;
+            function step(ts) {
+                if (!start) start = ts;
+                var p = Math.min((ts - start) / duration, 1);
+                var eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(eased * num);
+                if (p < 1) requestAnimationFrame(step);
+                else el.textContent = text;
+            }
+            requestAnimationFrame(step);
+        });
+    }, { threshold: 0.35 });
+
+    observer.observe(grid);
+})();
+
+/* ── Hero particle canvas ── */
+(function () {
+    var canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var ctx = canvas.getContext('2d');
+    var W = 0, H = 0, particles = [], animId = null;
+    var mx = -2000, my = -2000;
+    var C_P = '108,99,255', C_CY = '0,212,255';
+
+    function resize() {
+        var rect = canvas.parentElement.getBoundingClientRect();
+        W = canvas.width  = Math.round(rect.width);
+        H = canvas.height = Math.round(rect.height);
+    }
+
+    function Particle() {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.vx = (Math.random() - 0.5) * 0.32;
+        this.vy = (Math.random() - 0.5) * 0.32;
+        this.r  = Math.random() * 1.3 + 0.5;
+        this.a  = Math.random() * 0.45 + 0.2;
+    }
+    Particle.prototype.update = function () {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < -12) this.x = W + 12;
+        if (this.x > W + 12) this.x = -12;
+        if (this.y < -12) this.y = H + 12;
+        if (this.y > H + 12) this.y = -12;
+    };
+
+    function init() {
+        resize();
+        particles = [];
+        var n = Math.min(Math.floor((W * H) / 9500), 95);
+        for (var i = 0; i < n; i++) particles.push(new Particle());
+    }
+
+    function frame() {
+        ctx.clearRect(0, 0, W, H);
+        var i, j, p, q, dx, dy, d, a;
+        for (i = 0; i < particles.length; i++) {
+            p = particles[i];
+            p.update();
+
+            /* dot */
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+            ctx.fillStyle = 'rgba(' + C_P + ',' + p.a + ')';
+            ctx.fill();
+
+            /* particle–particle lines */
+            for (j = i + 1; j < particles.length; j++) {
+                q = particles[j];
+                dx = p.x - q.x; dy = p.y - q.y;
+                d = Math.sqrt(dx * dx + dy * dy);
+                if (d < 125) {
+                    a = (1 - d / 125) * 0.18;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(q.x, q.y);
+                    ctx.strokeStyle = 'rgba(' + C_P + ',' + a + ')';
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
+
+            /* mouse attraction */
+            dx = p.x - mx; dy = p.y - my;
+            d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 170) {
+                a = (1 - d / 170) * 0.58;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(mx, my);
+                ctx.strokeStyle = 'rgba(' + C_CY + ',' + a + ')';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+        animId = requestAnimationFrame(frame);
+    }
+
+    var rtimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(rtimer);
+        rtimer = setTimeout(init, 220);
+    }, { passive: true });
+
+    document.addEventListener('mousemove', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        mx = e.clientX - rect.left;
+        my = e.clientY - rect.top;
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function () { mx = -2000; my = -2000; });
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) { cancelAnimationFrame(animId); animId = null; }
+        else if (!animId) frame();
+    });
+
+    init();
+    frame();
+})();
+
+/* ── Corner brackets on cards ── */
+(function () {
+    document.querySelectorAll('.pblock, .ncard').forEach(function (el) {
+        ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
+            var s = document.createElement('span');
+            s.className = 'tc tc-' + pos;
+            s.setAttribute('aria-hidden', 'true');
+            el.appendChild(s);
+        });
+    });
 })();
 </script>
 </body>
