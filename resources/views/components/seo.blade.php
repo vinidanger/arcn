@@ -25,7 +25,7 @@
                 '@type' => 'Organization',
                 'name' => 'Arcn Solutions',
                 'url' => $siteUrl,
-                'logo' => url('/images/logo-192.png'),
+                'logo' => url('/images/android-chrome-512x512.png'),
                 'description' => 'Arcn Solutions desenvolve software para negócios: delivery, gestão, APIs e automação.',
             ],
             [
@@ -59,12 +59,9 @@
 <meta name="theme-color" content="#07080d">
 <link rel="canonical" href="{{ $canonicalUrl }}">
 
-{{-- PNG + ICO: o Google na busca costuma ignorar só SVG; favicons devem ser múltiplos de 48px e quadrados --}}
-<link rel="icon" href="{{ url('/favicon.ico') }}" sizes="48x48">
-<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48.png') }}">
-<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96.png') }}">
-<link rel="apple-touch-icon" href="{{ asset('favicon-96.png') }}">
-<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon.png') }}">
 
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="{{ $siteName }}">
